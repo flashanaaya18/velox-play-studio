@@ -190,7 +190,6 @@ function crearFila({ titulo, vista, filtro = '' }) {
 function definirFilas(vista) {
   if (vista === 'series') {
     return [
-      { titulo: 'Top', vista: 'series', filtro: 'es_top=eq.true' },
       { titulo: 'Nuevas temporadas', vista: 'series', filtro: 'temporada_nueva=eq.true' },
       { titulo: 'Nuevos episodios', vista: 'series', filtro: 'episodio_nuevo=eq.true' },
       { titulo: 'Series', vista: 'series' }
