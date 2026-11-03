@@ -104,7 +104,6 @@ function tarjetaHTML(item) {
   const poster = item.poster_url || item.backdrop_url || '';
   const anio = item.anio || '';
   const badges = [];
-  if (item.es_top) badges.push('<span class="badge badge--top">Top</span>');
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
   return `
@@ -234,7 +233,7 @@ async function pintarHero() {
       img.onload = () => { bg.style.backgroundImage = `url("${url}")`; bg.classList.add('is-ready'); };
       img.src = url;
     }
-    $('#hero-pill').textContent = item.es_top ? 'Top' : 'Destacado';
+    $('#hero-pill').textContent = 'Destacado';
     $('#hero-title').textContent = item.titulo || 'Velox Play';
     $('#hero-meta').textContent = [item.anio, item.calificacion && `★ ${item.calificacion}`].filter(Boolean).join(' · ');
     $('#hero-text').textContent = item.sinopsis || 'Disfruta del catálogo completo en audio Latino.';
@@ -454,25 +453,50 @@ function init() {
     else cerrarDetalle();
   });
 
-  // Formulario de reporte: envía por Telegram
-  window.VeloxReportar = function (ev) {
+  // Formulario de reporte: envía al bot de Telegram vía API (igual que la app)
+  window.VeloxReportar = async function (ev) {
     ev.preventDefault();
     const t = document.getElementById('r-titulo').value.trim();
     const m = document.getElementById('r-motivo').value.trim();
     const d = document.getElementById('r-detalle').value.trim();
     if (!t || !m) return false;
     const CFG = window.VELOX_CONFIG || {};
-    const user = (CFG.TELEGRAM_USER || 'veloxplay').replace(/^@/, '');
+    const token = CFG.TELEGRAM_BOT_TOKEN;
+    const chat = CFG.TELEGRAM_CHAT_ID;
+    if (!token || !chat) { toast('Config de Telegram ausente'); return false; }
+
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const fecha = new Date().toLocaleString('es-MX', { hour12: false });
     const texto =
-      `🎬 Reporte Velox Play\n\n` +
-      `• Título: ${t}\n` +
-      `• Motivo: ${m}\n` +
-      `• Detalle: ${d || '(sin detalle)'}\n` +
-      `• URL: ${location.href}`;
-    const url = `https://t.me/${encodeURIComponent(user)}?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-    toast('¡Gracias! Abriendo Telegram…');
-    try { document.querySelector('.reportar').reset(); } catch {}
+      `🚨 <b>Reporte de usuario (Web)</b>\n\n` +
+      `🎬 <b>Título:</b> ${esc(t)}\n` +
+      `⚠️ <b>Motivo:</b> ${esc(m)}\n` +
+      (d ? `💬 <b>Detalles:</b>\n${esc(d.slice(0, 2000))}\n` : '') +
+      `🌐 <b>URL:</b> ${esc(location.href)}\n\n` +
+      `⏰ ${esc(fecha)}`;
+
+    const btn = ev.submitter || document.querySelector('.reportar button[type="submit"]');
+    if (btn) { btn.disabled = true; }
+    try {
+      const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chat,
+          text: texto,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        })
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      toast('¡Gracias! Reporte enviado.');
+      try { document.querySelector('.reportar').reset(); } catch {}
+    } catch (e) {
+      console.error('[reporte]', e);
+      toast('No se pudo enviar. Intenta de nuevo.');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
     return false;
   };
 
