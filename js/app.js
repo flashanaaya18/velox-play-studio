@@ -206,16 +206,14 @@ function definirFilas(vista) {
   }
   if (vista === 'peliculas') {
     return [
-      { titulo: 'Top', vista: 'peliculas', filtro: 'es_top=eq.true' },
       { titulo: 'Estrenos', vista: 'peliculas' },
       { titulo: 'En cines (CAM)', vista: 'peliculas', filtro: 'es_cam=eq.true' }
     ];
   }
   // inicio
   return [
-    { titulo: 'Tendencia ahora', vista: 'peliculas', filtro: 'es_top=eq.true' },
     { titulo: 'Películas recientes', vista: 'peliculas' },
-    { titulo: 'Series destacadas', vista: 'series', filtro: 'es_top=eq.true' },
+    { titulo: 'Series recientes', vista: 'series' },
     { titulo: 'Nuevos episodios', vista: 'series', filtro: 'episodio_nuevo=eq.true' }
   ];
 }
@@ -233,8 +231,8 @@ async function pintarVista(vista) {
 let heroActual = null;
 async function pintarHero() {
   try {
-    const pool = await cargarPagina('peliculas', { filtro: 'es_top=eq.true', pagina: 1 });
-    const candidatos = pool.length ? pool.slice(0, HERO_POOL) : await cargarPagina('peliculas', { pagina: 1 });
+    const pool = await cargarPagina('peliculas', { pagina: 1 });
+    const candidatos = pool.slice(0, HERO_POOL);
     if (!candidatos.length) return;
     const item = candidatos[Math.floor(Math.random() * candidatos.length)];
     heroActual = item;
@@ -337,9 +335,22 @@ function onElegirServidor(ev) {
   if (!btn) return;
   const url = btn.dataset.url;
   if (!url) return;
-  // Abrir en nueva pestaña — el navegador no puede resolver iframes protegidos por embed69 PoW,
-  // pero el player externo (hglink/callistanise/etc.) sí reproduce directamente.
-  window.open(url, '_blank', 'noopener,noreferrer');
+  abrirPlayer(url);
+}
+
+function abrirPlayer(url) {
+  const p = document.getElementById('player');
+  const iframe = document.getElementById('player-iframe');
+  iframe.src = url;
+  p.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function cerrarPlayer() {
+  const p = document.getElementById('player');
+  const iframe = document.getElementById('player-iframe');
+  iframe.src = 'about:blank';
+  p.hidden = true;
+  document.body.style.overflow = '';
 }
 
 function pintarEpisodios(temp) {
@@ -423,7 +434,28 @@ function init() {
   // Detail close
   $('#detail-close').onclick = cerrarDetalle;
   $('#detail-backdrop').onclick = cerrarDetalle;
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarDetalle(); });
+  // Player close
+  $('#player-close').onclick = cerrarPlayer;
+  $('#player-backdrop').onclick = cerrarPlayer;
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!document.getElementById('player').hidden) cerrarPlayer();
+    else cerrarDetalle();
+  });
+
+  // Formulario de reporte: abre mailto con los datos
+  window.VeloxReportar = function (ev) {
+    ev.preventDefault();
+    const t = document.getElementById('r-titulo').value.trim();
+    const m = document.getElementById('r-motivo').value.trim();
+    const d = document.getElementById('r-detalle').value.trim();
+    if (!t || !m) return false;
+    const subject = encodeURIComponent(`[Velox Play] Reporte: ${t}`);
+    const body = encodeURIComponent(`Título: ${t}\nMotivo: ${m}\nDetalle: ${d || '(sin detalle)'}\n\nURL: ${location.href}`);
+    window.location.href = `mailto:anayabyron2@gmail.com?subject=${subject}&body=${body}`;
+    toast('¡Gracias! Abriendo tu cliente de correo…');
+    return false;
+  };
 
   // Query buscar via URL (?q=…)
   const params = new URLSearchParams(location.search);

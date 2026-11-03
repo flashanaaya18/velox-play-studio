@@ -520,3 +520,99 @@ button { cursor: pointer; font: inherit; color: inherit; background: none; borde
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
 }
+
+/* ========== APK + Reportar ========== */
+.apkbox {
+  max-width: 1400px;
+  margin: 40px auto 0;
+  padding: 0 max(16px, env(safe-area-inset-left, 0));
+}
+.apkbox__inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+.apkbox__card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+}
+.apkbox__card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.apkbox__card p { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; line-height: 1.5; }
+.apkbox__btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.apkbox__btns .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+.reportar { display: flex; flex-direction: column; gap: 10px; }
+.reportar input,
+.reportar select,
+.reportar textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.reportar input:focus,
+.reportar select:focus,
+.reportar textarea:focus { border-color: var(--accent); }
+.reportar textarea { resize: vertical; min-height: 68px; }
+.reportar .btn { align-self: flex-start; }
+
+/* ========== Player iframe ========== */
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  place-items: center;
+  padding: max(12px, env(safe-area-inset-top, 0));
+}
+.player[hidden] { display: none; }
+.player__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(6px);
+}
+.player__frame {
+  position: relative;
+  width: min(1200px, 100%);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.player__frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+.player__close {
+  position: absolute;
+  top: -42px;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 22px;
+  line-height: 36px;
+  z-index: 5;
+}
+.player__close:hover { background: rgba(255,255,255,0.28); }
+@media (max-width: 480px) {
+  .player__close { top: 4px; right: 4px; }
+  .player__frame { border-radius: 0; height: 100%; aspect-ratio: auto; width: 100%; }
+}

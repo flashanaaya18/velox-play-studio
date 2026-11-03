@@ -10,6 +10,7 @@
 <meta name="keywords" content="velox play, peliculas, series, latino, HD, streaming, cinemaxplus" />
 <meta name="robots" content="index,follow" />
 <meta name="author" content="Velox Play" />
+<meta name="google-site-verification" content="STGP4YSyU94hh-bEzj_2WWJMJvswsyFrWCLGjD6s4Sg" />
 <link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/" />
 
 <!-- Open Graph -->
@@ -101,6 +102,37 @@
 
   <!-- Filas dinámicas -->
   <section id="rows" class="rows" aria-label="Catálogo"></section>
+
+  <!-- App Android (próximamente) + Reportar -->
+  <section class="apkbox" id="apk" aria-label="Descargas y reportes">
+    <div class="apkbox__inner">
+      <div class="apkbox__card">
+        <h3>App Velox Play</h3>
+        <p>Instala la aplicación en tu móvil o Smart TV para ver películas y series directamente desde el reproductor nativo.</p>
+        <div class="apkbox__btns">
+          <button class="btn btn--ghost" disabled>APK Móvil — Próximamente</button>
+          <button class="btn btn--ghost" disabled>APK Android TV — Próximamente</button>
+        </div>
+      </div>
+      <div class="apkbox__card">
+        <h3>Reportar un problema</h3>
+        <p>¿Un servidor no carga? ¿Un título falta? Cuéntanos y lo arreglamos.</p>
+        <form class="reportar" onsubmit="return window.VeloxReportar(event)">
+          <input type="text" id="r-titulo" placeholder="Título del contenido" required />
+          <select id="r-motivo" required>
+            <option value="">¿Qué pasa?</option>
+            <option>No carga ningún servidor</option>
+            <option>Audio no es Latino</option>
+            <option>Episodios faltantes</option>
+            <option>Poster o datos incorrectos</option>
+            <option>Otro</option>
+          </select>
+          <textarea id="r-detalle" rows="3" placeholder="Detalle (opcional)"></textarea>
+          <button type="submit" class="btn btn--primary">Enviar reporte</button>
+        </form>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer">
@@ -141,6 +173,15 @@
       </div>
     </div>
   </article>
+</div>
+
+<!-- Reproductor embed (iframe en la misma página) -->
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-label="Reproductor">
+  <div class="player__backdrop" id="player-backdrop"></div>
+  <div class="player__frame">
+    <button class="player__close" type="button" id="player-close" aria-label="Cerrar reproductor">×</button>
+    <iframe id="player-iframe" src="about:blank" title="Reproductor" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe>
+  </div>
 </div>
 
 <!-- Toast -->
