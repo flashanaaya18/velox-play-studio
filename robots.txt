@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://flashanaaya18.github.io/velox-play-studio/sitemap.xml

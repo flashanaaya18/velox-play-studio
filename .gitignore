@@ -1,0 +1,16 @@
+# ─── Velox Play — archivos privados ────────────────────────────────
+# NUNCA subas tus credenciales al repo público.
+js/config.js
+.env
+.env.*
+*.local.js
+
+# Build / dependencias
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
