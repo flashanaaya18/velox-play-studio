@@ -616,3 +616,16 @@ button { cursor: pointer; font: inherit; color: inherit; background: none; borde
   .player__close { top: 4px; right: 4px; }
   .player__frame { border-radius: 0; height: 100%; aspect-ratio: auto; width: 100%; }
 }
+
+.episodios .ep-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(46,204,113,0.18);
+  color: #4ed88b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.episodios .ep-badge--off { background: rgba(255,255,255,0.08); color: var(--text-fade); }

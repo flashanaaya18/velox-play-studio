@@ -44,22 +44,14 @@ async function cargarDetallePeli(id) {
 }
 
 async function cargarDetalleSerie(id) {
-  // RPC obtener_serie_completa (igual que la app Android)
-  const res = await fetch(`${SB}/rest/v1/rpc/obtener_serie_completa`, {
-    method: 'POST',
-    headers: {
-      apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ p_serie_id: id })
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
-
-async function cargarServidoresEpisodio(episodioId) {
-  return sbGet(`episodio_servidores?episodio_id=eq.${episodioId}&select=*`, { desde: 0, hasta: 50 });
+  // Pide la serie y sus temporadas/episodios/servidores en un solo request anidado.
+  const body = await sbGet(`series?id=eq.${encodeURIComponent(id)}&select=*,temporadas(*,episodios(*,episodio_servidores(*)))`, { desde: 0, hasta: 0 });
+  const row = body && body[0];
+  if (!row) return null;
+  return {
+    serie: row,
+    temporadas: (row.temporadas || []).sort((a, b) => (a.numero || 0) - (b.numero || 0))
+  };
 }
 
 // ─────────────── Utilidades de UI ───────────────
@@ -356,21 +348,26 @@ function cerrarPlayer() {
 function pintarEpisodios(temp) {
   const ol = $('#episodios');
   ol.innerHTML = '';
-  const eps = (temp.episodios || []).sort((a, b) => a.numero - b.numero);
+  const eps = (temp.episodios || []).sort((a, b) => (a.numero || 0) - (b.numero || 0));
   if (!eps.length) { ol.innerHTML = '<li style="color:var(--text-fade)">Sin episodios</li>'; return; }
   for (const ep of eps) {
+    const servidores = ep.episodio_servidores || [];
+    const tieneSrv = servidores.length > 0;
     const li = document.createElement('li');
-    li.innerHTML = `<span class="ep-num">T${temp.numero}E${ep.numero}</span><span class="ep-tit">${ep.titulo || `Episodio ${ep.numero}`}</span>`;
-    li.onclick = async () => {
-      const servidores = await cargarServidoresEpisodio(ep.id);
-      if (!servidores.length) { toast('Sin servidores para este episodio'); return; }
-      // Mostrar picker rápido
-      $('#detail-servers').hidden = false;
-      $('#srv-grid').innerHTML = servidores.map((s, i) => botonServidorHTML(s, i)).join('');
-      $('#srv-grid').removeEventListener('click', onElegirServidor);
-      $('#srv-grid').addEventListener('click', onElegirServidor);
-      $('#detail-servers').scrollIntoView({ behavior: 'smooth' });
-    };
+    li.innerHTML = `
+      <span class="ep-num">T${temp.numero}E${ep.numero}</span>
+      <span class="ep-tit">${ep.titulo || `Episodio ${ep.numero}`}</span>
+      ${tieneSrv ? `<span class="ep-badge">${servidores.length} srv</span>` : '<span class="ep-badge ep-badge--off">Sin servidor</span>'}
+    `;
+    if (tieneSrv) {
+      li.onclick = () => {
+        $('#detail-servers').hidden = false;
+        $('#detail-servers').querySelector('h3').textContent = `Servidores — T${temp.numero}E${ep.numero}`;
+        $('#srv-grid').innerHTML = servidores.map((s, i) => botonServidorHTML(s, i)).join('');
+        $('#srv-grid').onclick = onElegirServidor;
+        $('#detail-servers').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      };
+    }
     ol.appendChild(li);
   }
 }
