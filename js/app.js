@@ -424,7 +424,22 @@ function init() {
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Nav
+  // Nav + hamburguesa móvil
+  const nav = document.getElementById('nav');
+  const navToggle = document.getElementById('nav-toggle');
+  if (navToggle && nav) {
+    const cerrarNav = () => { nav.classList.remove('is-open'); navToggle.setAttribute('aria-expanded', 'false'); };
+    navToggle.addEventListener('click', () => {
+      const abierto = nav.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+    nav.addEventListener('click', (e) => { if (e.target.closest('.nav__link')) cerrarNav(); });
+    document.addEventListener('click', (e) => {
+      if (!nav.classList.contains('is-open')) return;
+      if (e.target.closest('#nav') || e.target.closest('#nav-toggle')) return;
+      cerrarNav();
+    });
+  }
   $$('.nav__link').forEach(a => a.addEventListener('click', () => setTimeout(routear, 0)));
   window.addEventListener('hashchange', routear);
 
@@ -440,17 +455,25 @@ function init() {
     else cerrarDetalle();
   });
 
-  // Formulario de reporte: abre mailto con los datos
+  // Formulario de reporte: envía por Telegram
   window.VeloxReportar = function (ev) {
     ev.preventDefault();
     const t = document.getElementById('r-titulo').value.trim();
     const m = document.getElementById('r-motivo').value.trim();
     const d = document.getElementById('r-detalle').value.trim();
     if (!t || !m) return false;
-    const subject = encodeURIComponent(`[Velox Play] Reporte: ${t}`);
-    const body = encodeURIComponent(`Título: ${t}\nMotivo: ${m}\nDetalle: ${d || '(sin detalle)'}\n\nURL: ${location.href}`);
-    window.location.href = `mailto:anayabyron2@gmail.com?subject=${subject}&body=${body}`;
-    toast('¡Gracias! Abriendo tu cliente de correo…');
+    const CFG = window.VELOX_CONFIG || {};
+    const user = (CFG.TELEGRAM_USER || 'veloxplay').replace(/^@/, '');
+    const texto =
+      `🎬 Reporte Velox Play\n\n` +
+      `• Título: ${t}\n` +
+      `• Motivo: ${m}\n` +
+      `• Detalle: ${d || '(sin detalle)'}\n` +
+      `• URL: ${location.href}`;
+    const url = `https://t.me/${encodeURIComponent(user)}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    toast('¡Gracias! Abriendo Telegram…');
+    try { document.querySelector('.reportar').reset(); } catch {}
     return false;
   };
 

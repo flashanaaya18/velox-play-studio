@@ -69,10 +69,15 @@
       <span class="brand__name">Velox<span>Play</span></span>
     </a>
 
-    <nav class="nav" aria-label="Principal">
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Principal" id="nav">
       <a href="#inicio" class="nav__link is-active" data-view="inicio">Inicio</a>
       <a href="#peliculas" class="nav__link" data-view="peliculas">Películas</a>
       <a href="#series" class="nav__link" data-view="series">Series</a>
+      <a href="#apk" class="nav__link" data-view="apk">App</a>
     </nav>
 
     <form class="search" role="search" onsubmit="return window.VeloxBuscar(event)">
@@ -128,7 +133,10 @@
             <option>Otro</option>
           </select>
           <textarea id="r-detalle" rows="3" placeholder="Detalle (opcional)"></textarea>
-          <button type="submit" class="btn btn--primary">Enviar reporte</button>
+          <button type="submit" class="btn btn--primary">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="m9.78 18.65.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42"/></svg>
+            Enviar por Telegram
+          </button>
         </form>
       </div>
     </div>
