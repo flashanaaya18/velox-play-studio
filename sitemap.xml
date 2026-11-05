@@ -2,32 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://flashanaaya18.github.io/velox-play-studio/</loc>
-    <lastmod>2026-11-03</lastmod>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://flashanaaya18.github.io/velox-play-studio/#inicio</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/index.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/peliculas.html</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://flashanaaya18.github.io/velox-play-studio/#peliculas</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/series.html</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://flashanaaya18.github.io/velox-play-studio/#series</loc>
-    <lastmod>2026-11-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://flashanaaya18.github.io/velox-play-studio/#apk</loc>
-    <lastmod>2026-11-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html#terminos</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html#privacidad</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html#cookies</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html#derechos</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://flashanaaya18.github.io/velox-play-studio/app.html#reembolsos</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>

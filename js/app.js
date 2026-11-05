@@ -132,7 +132,7 @@ function crearFila({ titulo, vista, filtro = '' }) {
       <span class="row__count" aria-live="polite"></span>
     </header>
     <div class="row__scroller" role="list">
-      ${Array(6).fill(skeletonHTML()).join('')}
+      ${Array(PAGE_SIZE).fill(skeletonHTML()).join('')}
     </div>
   `;
   const scroller = $('.row__scroller', wrap);
@@ -507,5 +507,16 @@ function init() {
 
   pintarHero();
   routear();
+
+  // Enlace externo: #det=peli:ID o #det=serie:ID (desde peliculas.html / series.html)
+  function abrirDesdeHash() {
+    const m = /det=(peli|serie):(.+)/.exec(location.hash || '');
+    if (!m) return;
+    const esSerie = m[1] === 'serie';
+    const id = decodeURIComponent(m[2]);
+    abrirDetalle(id, esSerie);
+  }
+  abrirDesdeHash();
+  window.addEventListener('hashchange', abrirDesdeHash);
 }
 init();
