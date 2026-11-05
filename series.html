@@ -48,6 +48,7 @@
       <a href="index.html" class="nav__link">Inicio</a>
       <a href="peliculas.html" class="nav__link">Películas</a>
       <a href="series.html" class="nav__link is-active">Series</a>
+      <a href="canales.html" class="nav__link">Canales</a>
       <a href="app.html" class="nav__link">App</a>
     </nav>
   </div>
@@ -58,6 +59,7 @@
     <h1>Series</h1>
     <p>Catálogo completo en audio Latino. Filtra por categoría.</p>
     <div class="filtros" id="filtros" role="tablist" aria-label="Filtros de series"></div>
+    <div class="filtros-ext" id="filtros-ext" aria-label="Filtros avanzados"></div>
   </section>
 
   <section class="cat-grid" id="grid" aria-label="Lista de series"></section>
@@ -74,6 +76,7 @@
       <a href="index.html">Inicio</a>
       <a href="peliculas.html">Películas</a>
       <a href="series.html">Series</a>
+      <a href="canales.html">Canales</a>
       <a href="app.html">App</a>
       <a href="sitemap.xml">Sitemap</a>
     </nav>
@@ -100,6 +103,7 @@
     gridSel: '#grid',
     filtrosSel: '#filtros',
     estadoSel: '#estado',
+    extraSel: '#filtros-ext',
     filtros: [
       { key: 'novedades',    label: 'Novedades',         query: '' },
       { key: 'populares',    label: 'Más populares',     query: 'order=calificacion.desc.nullslast' },

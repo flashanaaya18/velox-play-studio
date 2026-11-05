@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0D1A" />
+<meta name="color-scheme" content="dark" />
+<title>Canales en vivo — Velox Play</title>
+<meta name="description" content="Próximamente: canales de TV en vivo en Velox Play. Deportes, cine, noticias y más." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/canales.html" />
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="css/styles.css" />
+<style>
+  .soon { max-width: 760px; margin: 60px auto; padding: 48px 20px; text-align: center; }
+  .soon__icon { width: 92px; height: 92px; margin: 0 auto 18px; display: block; }
+  .soon h1 { font-family: 'Space Grotesk', sans-serif; font-size: 34px; margin: 0 0 8px; }
+  .soon .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, var(--accent), var(--accent-2)); font-weight: 700; margin-bottom: 14px; }
+  .soon p { color: var(--text-dim); font-size: 16px; line-height: 1.6; margin: 10px 0; }
+  .soon__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 28px; }
+  .soon__item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; color: var(--text-dim); font-weight: 600; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="brand" aria-label="Velox Play inicio">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E50914"/><stop offset="1" stop-color="#FF6B2C"/></linearGradient></defs>
+        <rect width="32" height="32" rx="8" fill="url(#bg)"/><path d="M10 9 L22 16 L10 23 Z" fill="#fff"/>
+      </svg>
+      <span class="brand__name">Velox<span>Play</span></span>
+    </a>
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" aria-label="Principal" id="nav">
+      <a href="index.html" class="nav__link">Inicio</a>
+      <a href="peliculas.html" class="nav__link">Películas</a>
+      <a href="series.html" class="nav__link">Series</a>
+      <a href="canales.html" class="nav__link is-active">Canales</a>
+      <a href="app.html" class="nav__link">App</a>
+    </nav>
+  </div>
+</header>
+
+<main class="soon">
+  <svg class="soon__icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+    <rect x="6" y="14" width="52" height="34" rx="5" stroke="#FF6B2C" stroke-width="3"/>
+    <path d="M20 54h24" stroke="#FF6B2C" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="32" cy="31" r="7" fill="#E50914"/>
+  </svg>
+  <span class="tag">Próximamente</span>
+  <h1>Canales en vivo</h1>
+  <p>Estamos preparando una sección con canales de TV en vivo para que veas todo desde la misma app.</p>
+  <p>Deportes · Cine · Noticias · Infantil · Música y mucho más.</p>
+
+  <div class="soon__list" aria-label="Próximas categorías">
+    <div class="soon__item">⚽ Deportes</div>
+    <div class="soon__item">🎬 Cine 24/7</div>
+    <div class="soon__item">📰 Noticias</div>
+    <div class="soon__item">🎵 Música</div>
+    <div class="soon__item">👶 Infantil</div>
+    <div class="soon__item">🌎 Internacionales</div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span>Velox<strong>Play</strong></span>
+      <p>© <span id="y"></span> Velox Play.</p>
+    </div>
+    <nav class="footer__nav" aria-label="Pie de página">
+      <a href="index.html">Inicio</a>
+      <a href="peliculas.html">Películas</a>
+      <a href="series.html">Series</a>
+      <a href="canales.html">Canales</a>
+      <a href="app.html">App</a>
+      <a href="sitemap.xml">Sitemap</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+  (function () {
+    const nav = document.getElementById('nav'), t = document.getElementById('nav-toggle');
+    if (!nav || !t) return;
+    t.addEventListener('click', () => {
+      const abierto = nav.classList.toggle('is-open');
+      t.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+  })();
+</script>
+</body>
+</html>
