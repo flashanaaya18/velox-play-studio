@@ -31,9 +31,8 @@ function tarjeta(item, esSerie) {
   const badges = [];
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
-  const href = `index.html#det=${esSerie ? 'serie' : 'peli'}:${encodeURIComponent(item.id)}`;
   return `
-    <a class="card" href="${href}" aria-label="${title}">
+    <article class="card" data-id="${item.id}" data-serie="${esSerie ? 'true' : 'false'}" tabindex="0" role="button" aria-label="${title}">
       <img class="card__poster" loading="lazy" decoding="async" src="${poster}" alt="${title}" onerror="this.style.visibility='hidden'" />
       <div class="card__badges">${badges.join('')}</div>
       <div class="card__fade"></div>
@@ -41,7 +40,7 @@ function tarjeta(item, esSerie) {
         <div class="card__title">${title}</div>
         <div class="card__sub">${anio}</div>
       </div>
-    </a>
+    </article>
   `;
 }
 
@@ -98,6 +97,20 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
       cargando = false;
     }
   }
+
+  // Click → abre detalle inline
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('.card'); if (!card) return;
+    const id = card.dataset.id;
+    const esSerieCard = card.dataset.serie === 'true';
+    if (window.VeloxAbrirDetalle) window.VeloxAbrirDetalle(id, esSerieCard);
+  });
+  grid.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.card'); if (!card) return;
+    e.preventDefault();
+    if (window.VeloxAbrirDetalle) window.VeloxAbrirDetalle(card.dataset.id, card.dataset.serie === 'true');
+  });
 
   // Scroll infinito vertical
   window.addEventListener('scroll', () => {
