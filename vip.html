@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0D1A" />
+<meta name="color-scheme" content="dark" />
+<title>Velox Play VIP — Sin anuncios y acceso total</title>
+<meta name="description" content="Hazte VIP en Velox Play: sin anuncios, acceso a series, canales en vivo y fútbol, máxima calidad y soporte prioritario." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/vip.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Velox Play VIP" />
+<meta property="og:description" content="Sin anuncios, acceso total y máxima calidad." />
+<meta property="og:image" content="assets/og-cover.png" />
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="brand" aria-label="Velox Play inicio">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#E50914"/>
+            <stop offset="1" stop-color="#FF6B2C"/>
+          </linearGradient>
+        </defs>
+        <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+        <path d="M10 9 L22 16 L10 23 Z" fill="#fff"/>
+      </svg>
+      <span class="brand__name">Velox<span>Play</span></span>
+    </a>
+
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Principal" id="nav">
+      <a href="index.html" class="nav__link">Inicio</a>
+      <a href="peliculas.html" class="nav__link">Películas</a>
+      <a href="series.html" class="nav__link">Series</a>
+      <a href="canales.html" class="nav__link">Canales</a>
+      <a href="app.html" class="nav__link">App</a>
+      <a href="vip.html" class="nav__link is-active" aria-current="page">VIP</a>
+    </nav>
+  </div>
+</header>
+
+<main class="vip">
+  <section class="vip-hero">
+    <span class="vip-pill">Velox Play VIP</span>
+    <h1 class="vip-hero__title">Mira todo, sin anuncios y en la mejor calidad</h1>
+    <p class="vip-hero__text">Una sola membresía desbloquea series, canales en vivo y fútbol en tu móvil y en tu Smart TV.</p>
+    <div class="vip-hero__cta">
+      <a class="btn btn--primary" href="#planes">Ver planes</a>
+      <a class="btn btn--ghost" href="#como">¿Cómo me hago VIP?</a>
+    </div>
+  </section>
+
+  <section class="vip-section" aria-labelledby="ben-t">
+    <h2 id="ben-t" class="vip-h2">Lo que obtienes</h2>
+    <div class="vip-benefits">
+      <article class="vip-benefit"><h3>Sin anuncios</h3><p>Nada de esperas ni publicidad antes de tus películas y episodios.</p></article>
+      <article class="vip-benefit"><h3>Acceso total</h3><p>Películas, series, canales en vivo y fútbol desbloqueados.</p></article>
+      <article class="vip-benefit"><h3>Máxima calidad</h3><p>Servidores en HD cuando el contenido está disponible en esa calidad.</p></article>
+      <article class="vip-benefit"><h3>Soporte prioritario</h3><p>Tus reportes de títulos o servidores se atienden primero.</p></article>
+    </div>
+  </section>
+
+  <section class="vip-section" id="planes" aria-labelledby="pl-t">
+    <h2 id="pl-t" class="vip-h2">Elige tu plan</h2>
+    <div class="vip-plans">
+      <article class="vip-plan"><h3>Mensual</h3><p class="vip-plan__price">$X<span>/mes</span></p><p>30 días de acceso VIP.</p></article>
+      <article class="vip-plan vip-plan--rec"><span class="vip-plan__badge">Recomendado</span><h3>Trimestral</h3><p class="vip-plan__price">$X<span>/3 meses</span></p><p>90 días. El equilibrio ideal entre precio y tiempo.</p></article>
+      <article class="vip-plan"><h3>Semestral</h3><p class="vip-plan__price">$X<span>/6 meses</span></p><p>180 días con menos renovaciones.</p></article>
+      <article class="vip-plan"><h3>Anual</h3><p class="vip-plan__price">$X<span>/año</span></p><p>365 días sin preocuparte.</p></article>
+    </div>
+    <p class="vip-note">La mayoría de los usuarios VIP eligen el plan Trimestral.</p>
+  </section>
+
+  <section class="vip-section" aria-labelledby="cmp-t">
+    <h2 id="cmp-t" class="vip-h2">Gratis vs VIP</h2>
+    <div class="vip-table-wrap">
+      <table class="vip-table">
+        <thead><tr><th scope="col">Función</th><th scope="col">Gratis</th><th scope="col">VIP</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Películas</th><td>Sí</td><td>Sí</td></tr>
+          <tr><th scope="row">Series</th><td>No</td><td>Sí</td></tr>
+          <tr><th scope="row">Canales en vivo y fútbol</th><td>No</td><td>Sí</td></tr>
+          <tr><th scope="row">Anuncios</th><td>Sí</td><td>Ninguno</td></tr>
+          <tr><th scope="row">Soporte</th><td>Normal</td><td>Prioritario</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="vip-section vip-how" id="como" aria-labelledby="como-t">
+    <h2 id="como-t" class="vip-h2">Cómo hacerte VIP</h2>
+    <ol class="vip-steps">
+      <li>Consigue tu código VIP con el administrador de Velox Play o un distribuidor autorizado.</li>
+      <li>Abre la app y entra en <strong>Perfil → Canjear Código VIP</strong>.</li>
+      <li>Escribe tu código (por ejemplo <code>VIP-ABCD-1234</code>) y listo: VIP activado al instante.</li>
+    </ol>
+    <div class="vip-hero__cta">
+      <a class="btn btn--primary" href="app.html">Descargar la app</a>
+    </div>
+  </section>
+
+  <section class="vip-section" aria-labelledby="faq-t">
+    <h2 id="faq-t" class="vip-h2">Preguntas frecuentes</h2>
+    <div class="vip-faq">
+      <details><summary>¿Funciona en Smart TV?</summary><p>Sí. La app tiene versión para Android TV y tu código funciona en ella.</p></details>
+      <details><summary>¿Qué pasa cuando vence mi membresía?</summary><p>La app te avisa antes del vencimiento. Al vencer puedes seguir viendo películas en modo gratis o renovar con un nuevo código.</p></details>
+      <details><summary>¿El VIP se activa al momento?</summary><p>Sí, en cuanto el código se valida la membresía queda activa.</p></details>
+      <details><summary>¿Hay devoluciones?</summary><p>No se hacen devoluciones, salvo compra equivocada del plan reportada en 24 h sin uso.</p></details>
+    </div>
+  </section>
+
+  <p class="vip-small">No se hacen devoluciones, salvo compra equivocada del plan reportada en 24 h sin uso.</p>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span>Velox<strong>Play</strong></span>
+      <p>© <span id="y"></span> Velox Play. Todos los derechos reservados.</p>
+    </div>
+    <nav class="footer__nav" aria-label="Pie de página">
+      <a href="index.html">Inicio</a>
+      <a href="peliculas.html">Películas</a>
+      <a href="series.html">Series</a>
+      <a href="canales.html">Canales</a>
+      <a href="app.html">App</a>
+      <a href="vip.html">VIP</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/vip.js" defer></script>
+</body>
+</html>

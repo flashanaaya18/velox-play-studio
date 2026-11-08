@@ -9,6 +9,17 @@
   const SB = CFG.SUPABASE_URL, KEY = CFG.SUPABASE_KEY;
   if (!SB || !KEY) return;
 
+// ─── Escapado anti-XSS: todo dato que viene de la BD pasa por esc() antes de innerHTML ───
+  function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"'`]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]));
+}
+// URL segura para style.backgroundImage = `url("...")` (solo http/https).
+  function cssUrl(u) {
+  u = String(u || '');
+  if (!/^https?:\/\//i.test(u)) return '';
+  return u.replace(/["'()\s\\]/g, c => encodeURIComponent(c));
+}
+
   async function sbGet(path, range) {
     const r = await fetch(`${SB}/rest/v1/${path}`, {
       headers: {
@@ -69,9 +80,9 @@
   function botonServidorHTML(s, i) {
     const col = colorPorHost(hostDe(s.url));
     return `
-      <button class="srv" data-url="${s.url}" style="border-color:${col};background:${col}22">
+      <button class="srv" data-url="${esc(s.url)}" style="border-color:${col};background:${col}22">
         <span class="srv__dot" style="background:${col}"></span>
-        <span class="srv__name">${nombreServidor(s, i)}</span>
+        <span class="srv__name">${esc(nombreServidor(s, i))}</span>
       </button>
     `;
   }
@@ -205,9 +216,9 @@
       <h3>Similares</h3>
       <div class="sim-grid">
         ${items.map(it => `
-          <a class="sim-card" href="#" data-id="${it.id}">
-            <img loading="lazy" src="${it.poster_url || it.backdrop_url || ''}" alt="${(it.titulo || '').replace(/"/g, '&quot;')}"/>
-            <span>${it.titulo || ''}</span>
+          <a class="sim-card" href="#" data-id="${esc(it.id)}">
+            <img loading="lazy" src="${esc(it.poster_url || it.backdrop_url || '')}" alt="${esc(it.titulo)}"/>
+            <span>${esc(it.titulo)}</span>
           </a>
         `).join('')}
       </div>
@@ -229,20 +240,20 @@
     body.innerHTML = `
       <div class="detail-grid detail-grid--peli">
         <aside class="detail-side">
-          <img class="detail-side__poster" src="${row.poster_url || row.backdrop_url || ''}" alt="${(row.titulo||'').replace(/"/g,'&quot;')}" onerror="this.style.visibility='hidden'" />
+          <img class="detail-side__poster" src="${esc(row.poster_url || row.backdrop_url || '')}" alt="${esc(row.titulo)}" data-hide-on-error />
         </aside>
         <div>
-          <h2 id="detail-title">${row.titulo || ''}</h2>
-          <div class="detail__meta">${[row.anio, row.calificacion && `★ ${row.calificacion}`, 'Película', row.es_adulto && '<span style="color:#FF5252;font-weight:700">+18</span>']
+          <h2 id="detail-title">${esc(row.titulo)}</h2>
+          <div class="detail__meta">${[esc(row.anio), row.calificacion && `★ ${esc(row.calificacion)}`, 'Película', row.es_adulto && '<span style="color:#FF5252;font-weight:700">+18</span>']
             .filter(Boolean).map(x => `<span>${x}</span>`).join('<span class="dot">·</span>')}</div>
-          ${(row.generos && row.generos.length) ? `<div class="langs" style="margin:10px 0">${row.generos.slice(0,6).map(g=>`<span class="lang-pill">${g}</span>`).join('')}</div>` : ''}
-          <p>${row.sinopsis || ''}</p>
+          ${(row.generos && row.generos.length) ? `<div class="langs" style="margin:10px 0">${row.generos.slice(0,6).map(g=>`<span class="lang-pill">${esc(g)}</span>`).join('')}</div>` : ''}
+          <p>${esc(row.sinopsis)}</p>
           <div class="detail__servers" id="srv-mount"></div>
           <div class="similares" id="sim-mount"></div>
         </div>
       </div>
     `;
-    if (row.backdrop_url || row.poster_url) $('#detail-hero').style.backgroundImage = `url("${row.backdrop_url || row.poster_url}")`;
+    if (row.backdrop_url || row.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(row.backdrop_url || row.poster_url)}")`;
     pintarServidores(document.getElementById('srv-mount'), row.pelicula_servidores || []);
     cargarSimilares(row, false).then(sim => pintarSimilares(document.getElementById('sim-mount'), sim, false));
   }
@@ -263,11 +274,11 @@
     body.innerHTML = `
       <div class="detail-grid detail-grid--serie">
         <div class="serie-body">
-          <h2 id="detail-title">${s.titulo || ''}</h2>
-          <div class="detail__meta">${[s.anio, s.calificacion && `★ ${s.calificacion}`, 'Serie', s.es_adulto && '<span style="color:#FF5252;font-weight:700">+18</span>']
+          <h2 id="detail-title">${esc(s.titulo)}</h2>
+          <div class="detail__meta">${[esc(s.anio), s.calificacion && `★ ${esc(s.calificacion)}`, 'Serie', s.es_adulto && '<span style="color:#FF5252;font-weight:700">+18</span>']
             .filter(Boolean).map(x => `<span>${x}</span>`).join('<span class="dot">·</span>')}</div>
-          ${(s.generos && s.generos.length) ? `<div class="langs" style="margin:10px 0">${s.generos.slice(0,6).map(g=>`<span class="lang-pill">${g}</span>`).join('')}</div>` : ''}
-          <p>${s.sinopsis || ''}</p>
+          ${(s.generos && s.generos.length) ? `<div class="langs" style="margin:10px 0">${s.generos.slice(0,6).map(g=>`<span class="lang-pill">${esc(g)}</span>`).join('')}</div>` : ''}
+          <p>${esc(s.sinopsis)}</p>
           <div id="srv-mount"></div>
           <div class="similares" id="sim-mount"></div>
         </div>
@@ -284,7 +295,7 @@
         </aside>
       </div>
     `;
-    if (s.backdrop_url || s.poster_url) $('#detail-hero').style.backgroundImage = `url("${s.backdrop_url || s.poster_url}")`;
+    if (s.backdrop_url || s.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(s.backdrop_url || s.poster_url)}")`;
     cargarSimilares(s, true).then(sim => pintarSimilares(document.getElementById('sim-mount'), sim, true));
 
     const sel = document.getElementById('ep-sel');
@@ -298,7 +309,7 @@
       prev.disabled = next.disabled = true; sel.disabled = true;
       return;
     }
-    sel.innerHTML = temps.map((t, i) => `<option value="${i}">Temporada ${t.numero}${t.nombre ? ' · ' + t.nombre : ''}</option>`).join('');
+    sel.innerHTML = temps.map((t, i) => `<option value="${i}">Temporada ${esc(t.numero)}${t.nombre ? ' · ' + esc(t.nombre) : ''}</option>`).join('');
 
     let idxT = 0, idxE = 0;
     function mostrarTemp() {
@@ -312,7 +323,7 @@
             const n = (ep.episodio_servidores || []).length;
             return `<li data-i="${i}"${i === idxE ? ' class="is-active"' : ''}>
               <span class="ep-n">T${t.numero} · E${ep.numero}</span>
-              <span class="ep-t">${ep.titulo || `Episodio ${ep.numero}`}</span>
+              <span class="ep-t">${esc(ep.titulo || `Episodio ${ep.numero}`)}</span>
               <span class="ep-b">${n ? n + ' srv' : 'Sin srv'}</span>
             </li>`;
           }).join('')

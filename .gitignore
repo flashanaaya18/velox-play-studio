@@ -14,3 +14,24 @@ Thumbs.db
 # Editores
 .vscode/
 .idea/
+
+# ─── Secretos (endurecimiento) ─────────────────────────────────────
+.env*
+!.env.example
+*.keystore
+*.jks
+key.properties
+local.properties
+google-services.json
+service-account*.json
+*-service-account.json
+*.pem
+*.p12
+supabase/.temp/
+supabase/.branches/
+supabase/functions/**/.env
+graphify-out/
+*secret*.txt
+*secrets*.json
+*.dump
+*.sql.bak

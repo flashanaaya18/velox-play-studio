@@ -2,11 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src https:; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#0A0D1A" />
 <meta name="color-scheme" content="dark" />
 <title>Canales en vivo — Velox Play</title>
-<meta name="description" content="Próximamente: canales de TV en vivo en Velox Play. Deportes, cine, noticias y más." />
+<meta name="description" content="Canales de TV en vivo en Velox Play: Latinoamérica, en español, deportes, películas, noticias, infantil y música." />
 <meta name="robots" content="index,follow" />
 <link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/canales.html" />
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
@@ -15,13 +17,33 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="css/styles.css" />
 <style>
-  .soon { max-width: 760px; margin: 60px auto; padding: 48px 20px; text-align: center; }
-  .soon__icon { width: 92px; height: 92px; margin: 0 auto 18px; display: block; }
-  .soon h1 { font-family: 'Space Grotesk', sans-serif; font-size: 34px; margin: 0 0 8px; }
-  .soon .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, var(--accent), var(--accent-2)); font-weight: 700; margin-bottom: 14px; }
-  .soon p { color: var(--text-dim); font-size: 16px; line-height: 1.6; margin: 10px 0; }
-  .soon__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 28px; }
-  .soon__item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; color: var(--text-dim); font-weight: 600; font-size: 14px; }
+  .cat-header { max-width: 1400px; margin: 0 auto; padding: 24px 16px 8px; }
+  .cat-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; margin: 0 0 6px; }
+  .cat-header p { color: var(--text-dim); margin: 0 0 14px; }
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); cursor: pointer; }
+  .chip:hover { color: var(--text); border-color: var(--accent); }
+  .chip.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .buscar-canal { width: 100%; max-width: 420px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; }
+  .canales-grid { max-width: 1400px; margin: 0 auto; padding: 8px 16px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .canal { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 10px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; text-align: center; font: inherit; transition: border-color .15s, transform .15s; }
+  .canal:hover, .canal:focus-visible { border-color: var(--accent); transform: translateY(-2px); outline: none; }
+  .canal__logo { width: 100%; height: 70px; display: flex; align-items: center; justify-content: center; }
+  .canal__logo img { max-width: 100%; max-height: 70px; object-fit: contain; }
+  .canal__ph { font-size: 34px; }
+  .canal__nombre { font-weight: 600; font-size: 13.5px; line-height: 1.3; overflow-wrap: anywhere; }
+  .canal__cat { font-size: 11.5px; color: var(--text-fade); }
+  .cat-estado { max-width: 1400px; margin: 0 auto; padding: 0 16px 32px; color: var(--text-fade); font-size: 13px; text-align: center; }
+  .tv-player { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .tv-player[hidden] { display: none; }
+  .tv-player__fondo { position: absolute; inset: 0; background: rgba(0,0,0,.88); }
+  .tv-player__caja { position: relative; width: 100%; max-width: 1000px; }
+  .tv-player__barra { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #fff; margin-bottom: 8px; }
+  .tv-player__barra h2 { margin: 0; font-size: 17px; font-family: 'Space Grotesk', sans-serif; }
+  .tv-player__cerrar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; font-size: 22px; flex-shrink: 0; }
+  .tv-player video { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; }
+  .tv-player__aviso { color: var(--text-dim); font-size: 13px; min-height: 18px; margin-top: 8px; text-align: center; }
+  @media (max-width: 480px) { .canales-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; } }
 </style>
 </head>
 <body>
@@ -44,30 +66,34 @@
       <a href="series.html" class="nav__link">Series</a>
       <a href="canales.html" class="nav__link is-active">Canales</a>
       <a href="app.html" class="nav__link">App</a>
+      <a href="vip.html" class="nav__link">VIP</a>
     </nav>
   </div>
 </header>
 
-<main class="soon">
-  <svg class="soon__icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-    <rect x="6" y="14" width="52" height="34" rx="5" stroke="#FF6B2C" stroke-width="3"/>
-    <path d="M20 54h24" stroke="#FF6B2C" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="32" cy="31" r="7" fill="#E50914"/>
-  </svg>
-  <span class="tag">Próximamente</span>
-  <h1>Canales en vivo</h1>
-  <p>Estamos preparando una sección con canales de TV en vivo para que veas todo desde la misma app.</p>
-  <p>Deportes · Cine · Noticias · Infantil · Música y mucho más.</p>
-
-  <div class="soon__list" aria-label="Próximas categorías">
-    <div class="soon__item">⚽ Deportes</div>
-    <div class="soon__item">🎬 Cine 24/7</div>
-    <div class="soon__item">📰 Noticias</div>
-    <div class="soon__item">🎵 Música</div>
-    <div class="soon__item">👶 Infantil</div>
-    <div class="soon__item">🌎 Internacionales</div>
-  </div>
+<main>
+  <section class="cat-header">
+    <h1>Canales en vivo</h1>
+    <p>Los mismos canales que en la app Velox Play. Elige una sección y toca un canal para verlo.</p>
+    <div class="filtros" id="regiones" aria-label="Secciones de canales"></div>
+    <input class="buscar-canal" id="buscar-canal" type="search" placeholder="Buscar canal…" aria-label="Buscar canal" autocomplete="off" />
+  </section>
+  <section class="canales-grid" id="grid" aria-label="Lista de canales"></section>
+  <div class="ad-slot" data-ad="canales"></div>
+  <div class="cat-estado" id="estado" aria-live="polite"></div>
 </main>
+
+<div class="tv-player" id="tv-player" hidden role="dialog" aria-modal="true" aria-labelledby="tv-titulo">
+  <div class="tv-player__fondo" id="tv-fondo"></div>
+  <div class="tv-player__caja">
+    <div class="tv-player__barra">
+      <h2 id="tv-titulo"></h2>
+      <button class="tv-player__cerrar" type="button" id="tv-cerrar" aria-label="Cerrar">×</button>
+    </div>
+    <video id="tv-video" controls playsinline autoplay></video>
+    <p class="tv-player__aviso" id="tv-aviso" aria-live="polite"></p>
+  </div>
+</div>
 
 <footer class="footer">
   <div class="footer__inner">
@@ -81,21 +107,14 @@
       <a href="series.html">Series</a>
       <a href="canales.html">Canales</a>
       <a href="app.html">App</a>
+      <a href="vip.html">VIP</a>
       <a href="sitemap.xml">Sitemap</a>
     </nav>
   </div>
 </footer>
 
-<script>
-  document.getElementById('y').textContent = new Date().getFullYear();
-  (function () {
-    const nav = document.getElementById('nav'), t = document.getElementById('nav-toggle');
-    if (!nav || !t) return;
-    t.addEventListener('click', () => {
-      const abierto = nav.classList.toggle('is-open');
-      t.setAttribute('aria-expanded', abierto ? 'true' : 'false');
-    });
-  })();
-</script>
+<script src="js/ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.17/hls.min.js"></script>
+<script src="js/canales.js"></script>
 </body>
 </html>

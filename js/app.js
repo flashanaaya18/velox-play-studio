@@ -13,6 +13,18 @@ if (!SB || !KEY) {
   throw new Error('Config missing');
 }
 
+
+// ─── Escapado anti-XSS: todo dato que viene de la BD pasa por esc() antes de innerHTML ───
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"'`]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]));
+}
+// URL segura para style.backgroundImage = `url("...")` (solo http/https).
+function cssUrl(u) {
+  u = String(u || '');
+  if (!/^https?:\/\//i.test(u)) return '';
+  return u.replace(/["'()\s\\]/g, c => encodeURIComponent(c));
+}
+
 // ─────────────── Supabase REST helper ───────────────
 async function sbGet(path, { desde = 0, hasta = PAGE_SIZE - 1 } = {}) {
   const url = `${SB}/rest/v1/${path}`;
@@ -107,13 +119,13 @@ function tarjetaHTML(item) {
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
   return `
-    <article class="card" data-id="${item.id}" data-serie="${!!item.es_serie}" tabindex="0" role="button" aria-label="${title}">
-      <img class="card__poster" loading="lazy" decoding="async" src="${poster}" alt="${title}" onerror="this.style.visibility='hidden'" />
+    <article class="card" data-id="${esc(item.id)}" data-serie="${!!item.es_serie}" tabindex="0" role="button" aria-label="${esc(title)}">
+      <img class="card__poster" loading="lazy" decoding="async" src="${esc(poster)}" alt="${esc(title)}" data-hide-on-error />
       <div class="card__badges">${badges.join('')}</div>
       <div class="card__fade"></div>
       <div class="card__info">
-        <div class="card__title">${title}</div>
-        <div class="card__sub">${anio}</div>
+        <div class="card__title">${esc(title)}</div>
+        <div class="card__sub">${esc(anio)}</div>
       </div>
     </article>
   `;
@@ -128,7 +140,7 @@ function crearFila({ titulo, vista, filtro = '' }) {
   wrap.className = 'row';
   wrap.innerHTML = `
     <header class="row__header">
-      <h2 class="row__title">${titulo}</h2>
+      <h2 class="row__title">${esc(titulo)}</h2>
       <span class="row__count" aria-live="polite"></span>
     </header>
     <div class="row__scroller" role="list">
@@ -230,7 +242,7 @@ async function pintarHero() {
     const url = item.backdrop_url || item.poster_url;
     if (url) {
       const img = new Image();
-      img.onload = () => { bg.style.backgroundImage = `url("${url}")`; bg.classList.add('is-ready'); };
+      img.onload = () => { bg.style.backgroundImage = `url("${cssUrl(url)}")`; bg.classList.add('is-ready'); };
       img.src = url;
     }
     $('#hero-pill').textContent = 'Destacado';
@@ -267,9 +279,9 @@ async function abrirDetalle(id, esSerie) {
       $('#detail-title').textContent = s.titulo;
       $('#detail-meta').innerHTML = [
         s.anio, s.calificacion && `★ ${s.calificacion}`, 'Serie'
-      ].filter(Boolean).map(x => `<span>${x}</span>`).join('<span class="dot">·</span>');
+      ].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('<span class="dot">·</span>');
       $('#detail-sinopsis').textContent = s.sinopsis || '';
-      if (s.backdrop_url || s.poster_url) $('#detail-hero').style.backgroundImage = `url("${s.backdrop_url || s.poster_url}")`;
+      if (s.backdrop_url || s.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(s.backdrop_url || s.poster_url)}")`;
 
       // Temporadas
       $('#detail-temporadas').hidden = false;
@@ -290,9 +302,9 @@ async function abrirDetalle(id, esSerie) {
       $('#detail-title').textContent = row.titulo;
       $('#detail-meta').innerHTML = [
         row.anio, row.calificacion && `★ ${row.calificacion}`, 'Película'
-      ].filter(Boolean).map(x => `<span>${x}</span>`).join('<span class="dot">·</span>');
+      ].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('<span class="dot">·</span>');
       $('#detail-sinopsis').textContent = row.sinopsis || '';
-      if (row.backdrop_url || row.poster_url) $('#detail-hero').style.backgroundImage = `url("${row.backdrop_url || row.poster_url}")`;
+      if (row.backdrop_url || row.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(row.backdrop_url || row.poster_url)}")`;
       const srvs = row.pelicula_servidores || [];
       if (srvs.length) {
         $('#detail-servers').hidden = false;
@@ -312,10 +324,10 @@ function botonServidorHTML(s, i) {
   const nombre = nombreServidor(s, i);
   const idioma = (s.idioma || '').slice(0, 10);
   return `
-    <button class="srv" data-url="${s.url}" style="border-color:${col};background:${col}22">
+    <button class="srv" data-url="${esc(s.url)}" style="border-color:${col};background:${col}22">
       <span class="srv__dot" style="background:${col}"></span>
-      <span class="srv__name">${nombre}</span>
-      ${idioma ? `<span class="srv__lang" style="background:${col}44">${idioma}</span>` : ''}
+      <span class="srv__name">${esc(nombre)}</span>
+      ${idioma ? `<span class="srv__lang" style="background:${col}44">${esc(idioma)}</span>` : ''}
     </button>
   `;
 }
@@ -353,8 +365,8 @@ function pintarEpisodios(temp) {
     const tieneSrv = servidores.length > 0;
     const li = document.createElement('li');
     li.innerHTML = `
-      <span class="ep-num">T${temp.numero}E${ep.numero}</span>
-      <span class="ep-tit">${ep.titulo || `Episodio ${ep.numero}`}</span>
+      <span class="ep-num">T${esc(temp.numero)}E${esc(ep.numero)}</span>
+      <span class="ep-tit">${esc(ep.titulo || `Episodio ${ep.numero}`)}</span>
       ${tieneSrv ? `<span class="ep-badge">${servidores.length} srv</span>` : '<span class="ep-badge ep-badge--off">Sin servidor</span>'}
     `;
     if (tieneSrv) {
@@ -381,7 +393,7 @@ window.VeloxBuscar = function (ev) {
 
 async function pintarResultadosBusqueda(q) {
   const rows = $('#rows');
-  rows.innerHTML = `<section class="row"><header class="row__header"><h2 class="row__title">Resultados: "${q}"</h2></header><div class="row__scroller">${Array(5).fill(skeletonHTML()).join('')}</div></section>`;
+  rows.innerHTML = `<section class="row"><header class="row__header"><h2 class="row__title">Resultados: "${esc(q)}"</h2></header><div class="row__scroller">${Array(5).fill(skeletonHTML()).join('')}</div></section>`;
   const scroller = $('.row__scroller', rows);
   try {
     const safe = encodeURIComponent(q);
@@ -453,39 +465,33 @@ function init() {
     else cerrarDetalle();
   });
 
-  // Formulario de reporte: envía al bot de Telegram vía API (igual que la app)
+  // Formulario de reporte: se guarda en la tabla `reportes` de Supabase
+  // (anon solo puede INSERT, ver migrations/rls_hardening.sql). Un Database
+  // Webhook + Edge Function `reporte-telegram` reenvía al bot desde el
+  // servidor: el token de Telegram NUNCA está en el navegador.
   window.VeloxReportar = async function (ev) {
     ev.preventDefault();
-    const t = document.getElementById('r-titulo').value.trim();
-    const m = document.getElementById('r-motivo').value.trim();
-    const d = document.getElementById('r-detalle').value.trim();
+    const t = document.getElementById('r-titulo').value.trim().slice(0, 200);
+    const m = document.getElementById('r-motivo').value.trim().slice(0, 100);
+    const d = document.getElementById('r-detalle').value.trim().slice(0, 2000);
     if (!t || !m) return false;
-    const CFG = window.VELOX_CONFIG || {};
-    const token = CFG.TELEGRAM_BOT_TOKEN;
-    const chat = CFG.TELEGRAM_CHAT_ID;
-    if (!token || !chat) { toast('Config de Telegram ausente'); return false; }
-
-    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const fecha = new Date().toLocaleString('es-MX', { hour12: false });
-    const texto =
-      `🚨 <b>Reporte de usuario (Web)</b>\n\n` +
-      `🎬 <b>Título:</b> ${esc(t)}\n` +
-      `⚠️ <b>Motivo:</b> ${esc(m)}\n` +
-      (d ? `💬 <b>Detalles:</b>\n${esc(d.slice(0, 2000))}\n` : '') +
-      `🌐 <b>URL:</b> ${esc(location.href)}\n\n` +
-      `⏰ ${esc(fecha)}`;
 
     const btn = ev.submitter || document.querySelector('.reportar button[type="submit"]');
     if (btn) { btn.disabled = true; }
     try {
-      const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      const r = await fetch(`${SB}/rest/v1/reportes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          apikey: KEY,
+          Authorization: `Bearer ${KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
         body: JSON.stringify({
-          chat_id: chat,
-          text: texto,
-          parse_mode: 'HTML',
-          disable_web_page_preview: true
+          titulo: t,
+          motivo: m,
+          detalle: d || null,
+          url: location.href.slice(0, 500)
         })
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);

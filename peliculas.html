@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://iqebalrrvjmbtemlrigt.supabase.co; frame-src https:; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#0A0D1A" />
 <meta name="color-scheme" content="dark" />
@@ -50,6 +52,7 @@
       <a href="series.html" class="nav__link">Series</a>
       <a href="canales.html" class="nav__link">Canales</a>
       <a href="app.html" class="nav__link">App</a>
+      <a href="vip.html" class="nav__link">VIP</a>
     </nav>
   </div>
 </header>
@@ -62,7 +65,9 @@
     <div class="filtros-ext" id="filtros-ext" aria-label="Filtros avanzados"></div>
   </section>
 
+  <div class="ad-slot" data-ad="top"></div>
   <section class="cat-grid" id="grid" aria-label="Lista de películas"></section>
+  <div class="ad-slot" data-ad="bottom"></div>
   <div class="cat-estado" id="estado" aria-live="polite"></div>
 </main>
 
@@ -78,6 +83,7 @@
       <a href="series.html">Series</a>
       <a href="canales.html">Canales</a>
       <a href="app.html">App</a>
+      <a href="vip.html">VIP</a>
       <a href="sitemap.xml">Sitemap</a>
     </nav>
   </div>
@@ -88,29 +94,7 @@
 <script src="js/config.js"></script>
 <script src="js/detalle.js"></script>
 <script src="js/catalogo.js"></script>
-<script>
-  document.getElementById('y').textContent = new Date().getFullYear();
-  // Hamburguesa
-  (function () {
-    const nav = document.getElementById('nav'), t = document.getElementById('nav-toggle');
-    if (!nav || !t) return;
-    t.addEventListener('click', () => {
-      const abierto = nav.classList.toggle('is-open');
-      t.setAttribute('aria-expanded', abierto ? 'true' : 'false');
-    });
-  })();
-  VeloxCatalogo({
-    vista: 'peliculas',
-    gridSel: '#grid',
-    filtrosSel: '#filtros',
-    estadoSel: '#estado',
-    extraSel: '#filtros-ext',
-    filtros: [
-      { key: 'estrenos',   label: 'Estrenos',     query: '' },
-      { key: 'populares',  label: 'Más populares', query: 'order=calificacion.desc.nullslast' },
-      { key: 'cam',        label: 'En cines (CAM)', query: 'es_cam=eq.true' }
-    ]
-  });
-</script>
+<script src="js/ui.js"></script>
+<script src="js/page-peliculas.js"></script>
 </body>
 </html>

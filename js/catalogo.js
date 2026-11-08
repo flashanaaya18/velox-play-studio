@@ -5,6 +5,18 @@ const CFG = window.VELOX_CONFIG || {};
 const SB = CFG.SUPABASE_URL, KEY = CFG.SUPABASE_KEY;
 const PAGE = CFG.PAGE_SIZE || 20;
 
+
+// ─── Escapado anti-XSS: todo dato que viene de la BD pasa por esc() antes de innerHTML ───
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"'`]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]));
+}
+// URL segura para style.backgroundImage = `url("...")` (solo http/https).
+function cssUrl(u) {
+  u = String(u || '');
+  if (!/^https?:\/\//i.test(u)) return '';
+  return u.replace(/["'()\s\\]/g, c => encodeURIComponent(c));
+}
+
 if (!SB || !KEY) {
   document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#fff">Falta <code>js/config.js</code>.</div>';
   throw new Error('Config missing');
@@ -33,13 +45,13 @@ function tarjeta(item, esSerie) {
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
   return `
-    <article class="card" data-id="${item.id}" data-serie="${esSerie ? 'true' : 'false'}" tabindex="0" role="button" aria-label="${title}">
-      <img class="card__poster" loading="lazy" decoding="async" src="${poster}" alt="${title}" onerror="this.style.visibility='hidden'" />
+    <article class="card" data-id="${esc(item.id)}" data-serie="${esSerie ? 'true' : 'false'}" tabindex="0" role="button" aria-label="${esc(title)}">
+      <img class="card__poster" loading="lazy" decoding="async" src="${esc(poster)}" alt="${esc(title)}" data-hide-on-error />
       <div class="card__badges">${badges.join('')}</div>
       <div class="card__fade"></div>
       <div class="card__info">
-        <div class="card__title">${title}</div>
-        <div class="card__sub">${anio}</div>
+        <div class="card__title">${esc(title)}</div>
+        <div class="card__sub">${esc(anio)}</div>
       </div>
     </article>
   `;
@@ -72,8 +84,8 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
     for (let y = annoActual; y >= 1990; y--) anios.push(String(y));
     const generos = ['Acción','Aventura','Animación','Ciencia ficción','Comedia','Crimen','Documental','Drama','Fantasía','Terror','Misterio','Romance','Suspense','Guerra','Familia'];
     extra.innerHTML = `
-      <select id="f-anio" aria-label="Año"><option value="">Año: Todos</option>${anios.map(a => `<option value="${a}">${a}</option>`).join('')}</select>
-      <select id="f-gen" aria-label="Género"><option value="">Género: Todos</option>${generos.map(g => `<option value="${g}">${g}</option>`).join('')}</select>
+      <select id="f-anio" aria-label="Año"><option value="">Año: Todos</option>${anios.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('')}</select>
+      <select id="f-gen" aria-label="Género"><option value="">Género: Todos</option>${generos.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('')}</select>
     `;
     extra.querySelector('#f-anio').onchange = (e) => { anioSel = e.target.value; recargar(); };
     extra.querySelector('#f-gen').onchange  = (e) => { generoSel = e.target.value; recargar(); };

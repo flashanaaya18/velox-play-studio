@@ -1,4 +1,50 @@
+# Velox Play — robots.txt
+# OJO: robots.txt es solo una petición (advisory). Los bots educados lo
+# respetan; los scrapers maliciosos lo ignoran. No protege nada por sí solo.
+
+# ─── Crawlers de IA / entrenamiento de modelos: bloqueados ───
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: CCBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: FacebookBot
+User-agent: Diffbot
+User-agent: omgili
+User-agent: omgilibot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: YouBot
+User-agent: ImagesiftBot
+User-agent: Timpibot
+User-agent: PetalBot
+User-agent: Kangaroo Bot
+User-agent: Scrapy
+User-agent: img2dataset
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+Disallow: /
+
+# ─── Buscadores normales ───
 User-agent: *
 Allow: /
+Disallow: /js/
+Disallow: /migrations/
+Disallow: /supabase/
 
 Sitemap: https://flashanaaya18.github.io/velox-play-studio/sitemap.xml
