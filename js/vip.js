@@ -62,7 +62,9 @@
       body: JSON.stringify({ plan_id: elegido, plan_nombre: p.nombre, precio_mxn: p.precio, contacto: contacto.slice(0, 120), origen: 'web' })
     }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      estado.textContent = '¡Listo! Te contactaremos en ' + contacto + ' con los datos de pago de $' + p.precio + ' MXN.';
+      estado.textContent = '¡Listo! Te abrimos WhatsApp para pagar $' + p.precio + ' MXN y recibir tu código VIP.';
+      var texto = 'Hola, quiero el plan VIP ' + p.nombre + ' de Velox Play por $' + p.precio + ' MXN. Mi contacto: ' + contacto + '. ¿Cómo pago?';
+      window.open('https://wa.me/525616840524?text=' + encodeURIComponent(texto), '_blank', 'noopener');
       form.reset();
     }).catch(function () {
       estado.textContent = 'No se pudo enviar. Inténtalo de nuevo en unos minutos.';
