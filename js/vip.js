@@ -28,46 +28,13 @@
     mes_6: { nombre: 'Semestral', precio: 239 },
     ano_1: { nombre: 'Anual', precio: 449 }
   };
-  var form = document.getElementById('vip-solicitud');
-  var estado = document.getElementById('vip-sol-estado');
-  var elegido = null;
+  var DIAS = { mes_1: 30, mes_3: 90, mes_6: 180, ano_1: 365 };
   document.querySelectorAll('.vip-elegir').forEach(function (b) {
     b.addEventListener('click', function () {
-      elegido = b.getAttribute('data-plan');
-      var p = PLANES[elegido];
-      document.getElementById('vip-sol-titulo').textContent = 'Plan ' + p.nombre + ' · $' + p.precio + ' MXN';
-      estado.textContent = '';
-      form.hidden = false;
-      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('vip-contacto').focus({ preventScroll: true });
-    });
-  });
-  if (form) form.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    var cfg = window.VELOX_CONFIG || {};
-    var contacto = document.getElementById('vip-contacto').value.trim();
-    var p = PLANES[elegido];
-    if (!p || !contacto || !cfg.SUPABASE_URL) return;
-    var btn = form.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    estado.textContent = 'Enviando…';
-    fetch(cfg.SUPABASE_URL + '/rest/v1/solicitudes_vip', {
-      method: 'POST',
-      headers: {
-        apikey: cfg.SUPABASE_KEY,
-        Authorization: 'Bearer ' + cfg.SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal'
-      },
-      body: JSON.stringify({ plan_id: elegido, plan_nombre: p.nombre, precio_mxn: p.precio, contacto: contacto.slice(0, 120), origen: 'web' })
-    }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      estado.textContent = '¡Listo! Te abrimos WhatsApp para pagar $' + p.precio + ' MXN y recibir tu código VIP.';
-      var texto = 'Hola, quiero el plan VIP ' + p.nombre + ' de Velox Play por $' + p.precio + ' MXN. Mi contacto: ' + contacto + '. ¿Cómo pago?';
+      var id = b.getAttribute('data-plan');
+      var p = PLANES[id];
+      var texto = 'Hola, quiero el plan VIP ' + p.nombre + ' (' + DIAS[id] + ' días) de Velox Play por $' + p.precio + ' MXN. ¿Cómo pago?';
       window.open('https://wa.me/525616840524?text=' + encodeURIComponent(texto), '_blank', 'noopener');
-      form.reset();
-    }).catch(function () {
-      estado.textContent = 'No se pudo enviar. Inténtalo de nuevo en unos minutos.';
-    }).finally(function () { btn.disabled = false; });
+    });
   });
 })();
