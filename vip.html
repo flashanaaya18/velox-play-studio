@@ -77,12 +77,19 @@
   <section class="vip-section" id="planes" aria-labelledby="pl-t">
     <h2 id="pl-t" class="vip-h2">Elige tu plan</h2>
     <div class="vip-plans">
-      <article class="vip-plan"><h3>Mensual</h3><p class="vip-plan__price">$X<span>/mes</span></p><p>30 días de acceso VIP.</p></article>
-      <article class="vip-plan vip-plan--rec"><span class="vip-plan__badge">Recomendado</span><h3>Trimestral</h3><p class="vip-plan__price">$X<span>/3 meses</span></p><p>90 días. El equilibrio ideal entre precio y tiempo.</p></article>
-      <article class="vip-plan"><h3>Semestral</h3><p class="vip-plan__price">$X<span>/6 meses</span></p><p>180 días con menos renovaciones.</p></article>
-      <article class="vip-plan"><h3>Anual</h3><p class="vip-plan__price">$X<span>/año</span></p><p>365 días sin preocuparte.</p></article>
+      <article class="vip-plan"><h3>Mensual</h3><p class="vip-plan__price">$49<span> MXN</span></p><p>30 días de acceso VIP. Sin renovación automática.</p><button class="btn btn--ghost vip-elegir" type="button" data-plan="mes_1">Elegir Mensual</button></article>
+      <article class="vip-plan vip-plan--rec"><span class="vip-plan__badge">Recomendado</span><h3>Trimestral</h3><p class="vip-plan__price">$129<span> MXN</span></p><p>90 días · $43 al mes · ahorras $18.</p><button class="btn btn--primary vip-elegir" type="button" data-plan="mes_3">Elegir Trimestral</button></article>
+      <article class="vip-plan"><h3>Semestral</h3><p class="vip-plan__price">$239<span> MXN</span></p><p>180 días · $40 al mes · ahorras $55.</p><button class="btn btn--ghost vip-elegir" type="button" data-plan="mes_6">Elegir Semestral</button></article>
+      <article class="vip-plan"><h3>Anual</h3><p class="vip-plan__price">$449<span> MXN</span></p><p>365 días · $37 al mes · ahorras $139.</p><button class="btn btn--ghost vip-elegir" type="button" data-plan="ano_1">Elegir Anual</button></article>
     </div>
-    <p class="vip-note">La mayoría de los usuarios VIP eligen el plan Trimestral.</p>
+    <p class="vip-note">Precios en pesos mexicanos. Pago único por periodo, sin cargos automáticos.</p>
+    <form class="vip-solicitud" id="vip-solicitud" hidden>
+      <h3 id="vip-sol-titulo">Plan elegido</h3>
+      <p>Déjanos un WhatsApp o Telegram para enviarte los datos de pago y tu código VIP.</p>
+      <input id="vip-contacto" type="text" maxlength="120" placeholder="WhatsApp o @usuario de Telegram" required autocomplete="tel" />
+      <button class="btn btn--primary" type="submit">Enviar solicitud</button>
+      <p class="vip-sol-estado" id="vip-sol-estado" aria-live="polite"></p>
+    </form>
   </section>
 
   <section class="vip-section" aria-labelledby="cmp-t">
@@ -104,7 +111,8 @@
   <section class="vip-section vip-how" id="como" aria-labelledby="como-t">
     <h2 id="como-t" class="vip-h2">Cómo hacerte VIP</h2>
     <ol class="vip-steps">
-      <li>Consigue tu código VIP con el administrador de Velox Play o un distribuidor autorizado.</li>
+      <li>Elige tu plan aquí o en la app y envía tu solicitud; te mandamos los datos de pago.</li>
+      <li>Al confirmar tu pago recibes tu código VIP.</li>
       <li>Abre la app y entra en <strong>Perfil → Canjear Código VIP</strong>.</li>
       <li>Escribe tu código (por ejemplo <code>VIP-ABCD-1234</code>) y listo: VIP activado al instante.</li>
     </ol>
@@ -143,6 +151,7 @@
   </div>
 </footer>
 
+<script src="js/config.js"></script>
 <script src="js/vip.js" defer></script>
 </body>
 </html>

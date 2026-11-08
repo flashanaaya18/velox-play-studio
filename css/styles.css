@@ -820,3 +820,11 @@ body.con-ad-barra { padding-bottom: 92px; }
   .ad-velox--compacto .ad-velox__ceja { display: none; }
   .ad-velox--compacto .ad-velox__titulo { font-size: 13.5px; }
 }
+
+/* VIP: elegir plan */
+.vip-elegir { margin-top: 12px; width: 100%; }
+.vip-solicitud { margin-top: 18px; padding: 18px; border-radius: var(--radius); border: 1px solid var(--accent); background: var(--surface); display: grid; gap: 10px; max-width: 520px; }
+.vip-solicitud h3 { margin: 0; font-family: 'Space Grotesk', sans-serif; }
+.vip-solicitud p { margin: 0; color: var(--text-dim); font-size: 14px; }
+.vip-solicitud input { padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-2); color: var(--text); font: inherit; }
+.vip-sol-estado { color: var(--accent-2) !important; font-weight: 600; }
