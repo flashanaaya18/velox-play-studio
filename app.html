@@ -5,23 +5,34 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://iqebalrrvjmbtemlrigt.supabase.co; frame-src https:; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#0A0D1A" />
+<meta name="theme-color" content="#0a0a0a" />
 <meta name="color-scheme" content="dark" />
 <title>App Velox Play — Info y Legal</title>
 <meta name="description" content="Información sobre la aplicación Velox Play para Android y Android TV, términos y condiciones, política de cookies, derechos de autor y política de reembolsos." />
 <meta name="robots" content="index,follow" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="App Velox Play para Android y Android TV" />
+<meta property="og:description" content="Descarga la app Velox Play para Android y Android TV; términos, privacidad y contacto." />
+<meta property="og:image" content="https://flashanaaya18.github.io/velox-play-studio/assets/icons/nuevo.png" />
+<meta property="og:url" content="https://flashanaaya18.github.io/velox-play-studio/app.html" />
+<meta name="twitter:card" content="summary_large_image" />
 <link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/app.html" />
+<link rel="icon" type="image/png" href="assets/icons/nuevo.png" />
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://iqebalrrvjmbtemlrigt.supabase.co" crossorigin />
+<link rel="dns-prefetch" href="https://iqebalrrvjmbtemlrigt.supabase.co" />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="css/styles.css" />
 <style>
   .doc { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
-  .doc__hero { background: linear-gradient(135deg, rgba(229,9,20,0.15), rgba(255,107,44,0.1)); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 28px; }
-  .doc__hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 30px; margin: 0 0 8px; }
+  .doc__hero { overflow-wrap: anywhere; background: linear-gradient(135deg, rgba(229,9,20,0.15), rgba(255,107,44,0.1)); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 4vw, 28px); margin-bottom: 28px; }
+  .doc__hero h1 { font-family: "Space Grotesk", sans-serif; font-size: clamp(24px, 5vw, 30px); margin: 0 0 8px; }
   .doc__hero p { color: var(--text-dim); margin: 0; line-height: 1.6; }
-  .doc__caracteristicas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 20px 0; }
+  .doc__caracteristicas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px; margin: 20px 0; }
   .feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
   .feat strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 14px; }
   .feat span { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
@@ -49,7 +60,7 @@
       </svg>
       <span class="brand__name">Velox<span>Play</span></span>
     </a>
-    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
       <span></span><span></span><span></span>
     </button>
     <nav class="nav" aria-label="Principal" id="nav">
@@ -60,6 +71,13 @@
       <a href="app.html" class="nav__link is-active">App</a>
       <a href="vip.html" class="nav__link">VIP</a>
     </nav>
+    <form class="search" id="buscador" role="search">
+      <input id="q" type="search" placeholder="Buscar título, género o año…" aria-label="Buscar" autocomplete="off" aria-controls="buscador-resultados" aria-expanded="false" />
+      <button type="submit" aria-label="Buscar">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 1-5.3 14l-3.2 3.2-1.4-1.4 3.2-3.2A8 8 0 0 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+      </button>
+      <div id="buscador-resultados" class="buscador-resultados" role="listbox" aria-label="Resultados de búsqueda" hidden></div>
+    </form>
   </div>
 </header>
 
@@ -173,5 +191,7 @@
 </footer>
 
 <script src="js/ui.js"></script>
+<script src="js/config.js"></script>
+<script src="js/buscador.js"></script>
 </body>
 </html>

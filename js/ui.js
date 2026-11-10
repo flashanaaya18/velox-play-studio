@@ -4,13 +4,51 @@
   var y = document.getElementById('y');
   if (y) y.textContent = new Date().getFullYear();
 
-  // Menú hamburguesa
+  // Menú hamburguesa: ui.js es el ÚNICO dueño del menú en todas las páginas
+  // (antes app.js y vip.js añadían otro listener y el menú se abría y cerraba en el mismo toque).
   var nav = document.getElementById('nav'), t = document.getElementById('nav-toggle');
-  if (nav && t) {
-    t.addEventListener('click', function () {
-      var abierto = nav.classList.toggle('is-open');
-      t.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+  if (nav && t && !t.dataset.menuListo) {
+    t.dataset.menuListo = '1';
+    t.setAttribute('aria-controls', 'nav');
+    t.setAttribute('aria-expanded', 'false');
+    var esMovil = function () { return getComputedStyle(t).display !== 'none'; };
+    var focables = function () { return [t].concat(Array.prototype.slice.call(nav.querySelectorAll('a[href], button:not([disabled])'))); };
+    var abrir = function () {
+      nav.classList.add('is-open');
+      t.setAttribute('aria-expanded', 'true');
+      t.setAttribute('aria-label', 'Cerrar menú');
+      var primero = nav.querySelector('a[href]');
+      if (primero) primero.focus({ preventScroll: true });
+    };
+    var cerrar = function (devolverFoco) {
+      if (!nav.classList.contains('is-open')) return;
+      nav.classList.remove('is-open');
+      t.setAttribute('aria-expanded', 'false');
+      t.setAttribute('aria-label', 'Abrir menú');
+      if (devolverFoco) t.focus({ preventScroll: true });
+    };
+    t.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (nav.classList.contains('is-open')) cerrar(true); else abrir();
     });
+    // Cerrar al pulsar un enlace del menú
+    nav.addEventListener('click', function (e) { if (e.target.closest('a')) cerrar(false); });
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('is-open') && !nav.contains(e.target) && !t.contains(e.target)) cerrar(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!nav.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { cerrar(true); return; }
+      // Trampa de foco básica (solo móvil): Tab circula entre el botón y los enlaces
+      if (e.key === 'Tab' && esMovil()) {
+        var f = focables(), i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      }
+    });
+    // Si se agranda la ventana con el menú abierto, se cierra
+    window.addEventListener('resize', function () { if (!esMovil()) cerrar(false); }, { passive: true });
   }
 
   // Sustituye los antiguos onerror="this.style.visibility='hidden'" de los pósters.
@@ -86,18 +124,19 @@
     barra.className = 'ad-barra';
     barra.setAttribute('role', 'complementary');
     barra.setAttribute('aria-label', 'Promoción Velox Play');
-    var cerrar = document.createElement('button');
-    cerrar.type = 'button';
-    cerrar.className = 'ad-barra__cerrar';
-    cerrar.setAttribute('aria-label', 'Cerrar promoción');
-    cerrar.textContent = '×';
-    cerrar.addEventListener('click', function () {
+    // Ojo: no llamar "cerrar" a este botón; con var pisaría la función cerrar() del menú.
+    var btnCerrarBarra = document.createElement('button');
+    btnCerrarBarra.type = 'button';
+    btnCerrarBarra.className = 'ad-barra__cerrar';
+    btnCerrarBarra.setAttribute('aria-label', 'Cerrar promoción');
+    btnCerrarBarra.textContent = '×';
+    btnCerrarBarra.addEventListener('click', function () {
       barra.remove();
       document.body.classList.remove('con-ad-barra');
       try { localStorage.setItem(CLAVE, String(Date.now())); } catch (e) {}
     });
     barra.appendChild(crearAnuncio(lista[(inicio + 2) % lista.length], true));
-    barra.appendChild(cerrar);
+    barra.appendChild(btnCerrarBarra);
     setTimeout(function () {
       document.body.appendChild(barra);
       document.body.classList.add('con-ad-barra');

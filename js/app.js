@@ -50,22 +50,6 @@ async function cargarPagina(vista, { filtro = '', pagina = 1 } = {}) {
   return sbGet(`${tabla}${q}`, { desde, hasta });
 }
 
-async function cargarDetallePeli(id) {
-  const [row] = await sbGet(`peliculas?id=eq.${encodeURIComponent(id)}&select=*,pelicula_servidores(*)`, { desde: 0, hasta: 0 });
-  return row || null;
-}
-
-async function cargarDetalleSerie(id) {
-  // Pide la serie y sus temporadas/episodios/servidores en un solo request anidado.
-  const body = await sbGet(`series?id=eq.${encodeURIComponent(id)}&select=*,temporadas(*,episodios(*,episodio_servidores(*)))`, { desde: 0, hasta: 0 });
-  const row = body && body[0];
-  if (!row) return null;
-  return {
-    serie: row,
-    temporadas: (row.temporadas || []).sort((a, b) => (a.numero || 0) - (b.numero || 0))
-  };
-}
-
 // ─────────────── Utilidades de UI ───────────────
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -76,41 +60,11 @@ const toast = (msg, ms = 2400) => {
   setTimeout(() => t.classList.remove('is-visible'), ms);
 };
 
-function hostDe(url) {
-  try { return new URL(url).host.toLowerCase(); } catch { return ''; }
-}
-function colorPorHost(h) {
-  if (!h) return '#E50914';
-  if (/earnvid|ryderjet|vidhide|filelions|lulu|morenci|callistanise|dramiyos/.test(h)) return '#2ECC71';
-  if (/streamwish|playerwish|awish|strwish|wishembed|premilkyway|hglink/.test(h)) return '#3498DB';
-  if (/filemoon|moonplayer|kerapoxy/.test(h)) return '#F1C40F';
-  if (/voe|tubelessceliolymph|robaltouphol/.test(h)) return '#9B59B6';
-  if (/doodstream|dood\.|ds2play|d0000d/.test(h)) return '#E67E22';
-  if (/mixdrop|mxdrop/.test(h)) return '#E91E63';
-  if (/streamtape|stape/.test(h)) return '#1ABC9C';
-  return '#E50914';
-}
-function nombreServidor(s, idx) {
-  const base = (s.servidor || '')
-    .replace(/\[|\]/g, ' ')
-    .replace(/latino|castellano|español|subtitulado/gi, '')
-    .trim();
-  if (base) return `Servidor ${idx + 1} — ${base}`;
-  const h = hostDe(s.url);
-  const n = /earnvid|vidhide|morenci|callistanise|dramiyos/.test(h) ? 'Vidhide'
-          : /streamwish|premilkyway|hglink/.test(h) ? 'Streamwish'
-          : /filemoon/.test(h) ? 'Filemoon'
-          : /voe/.test(h) ? 'Voe'
-          : /doodstream|dood\./.test(h) ? 'Doodstream'
-          : /mixdrop/.test(h) ? 'Mixdrop'
-          : /streamtape|stape/.test(h) ? 'Streamtape'
-          : (h || 'Servidor');
-  return `Servidor ${idx + 1} — ${n}`;
-}
-
-function anchor(id) { return location.hash = id ? `#${id}` : ''; }
-
 // ─────────────── Tarjeta ───────────────
+// URL de la ficha: detalles.html?id=<id>&tipo=pelicula|serie
+function urlDetalle(id, esSerie) {
+  return `detalles.html?id=${encodeURIComponent(id)}&tipo=${esSerie ? 'serie' : 'pelicula'}`;
+}
 function tarjetaHTML(item) {
   const title = item.titulo || 'Sin título';
   const poster = item.poster_url || item.backdrop_url || '';
@@ -118,16 +72,17 @@ function tarjetaHTML(item) {
   const badges = [];
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
+  // Enlace real (sin JS y para SEO) hacia la ficha nueva.
   return `
-    <article class="card" data-id="${esc(item.id)}" data-serie="${!!item.es_serie}" tabindex="0" role="button" aria-label="${esc(title)}">
-      <img class="card__poster" loading="lazy" decoding="async" src="${esc(poster)}" alt="${esc(title)}" data-hide-on-error />
+    <a class="card" href="${urlDetalle(item.id, item.es_serie)}" data-id="${esc(item.id)}" data-serie="${!!item.es_serie}" aria-label="${esc(title)}${anio ? ' (' + esc(anio) + ')' : ''}">
+      <img class="card__poster" loading="lazy" decoding="async" width="300" height="450" src="${esc(poster)}" alt="Póster de ${esc(title)}" data-hide-on-error />
       <div class="card__badges">${badges.join('')}</div>
       <div class="card__fade"></div>
       <div class="card__info">
         <div class="card__title">${esc(title)}</div>
         <div class="card__sub">${esc(anio)}</div>
       </div>
-    </article>
+    </a>
   `;
 }
 function skeletonHTML() {
@@ -183,15 +138,6 @@ function crearFila({ titulo, vista, filtro = '' }) {
     const cerca = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 600;
     if (cerca && hayMas && !cargando) { pagina += 1; pedir(); }
   }, { passive: true });
-
-  // Click → abrir detalle
-  scroller.addEventListener('click', (ev) => {
-    const card = ev.target.closest('.card');
-    if (!card) return;
-    const id = card.dataset.id;
-    const esSerie = card.dataset.serie === 'true';
-    abrirDetalle(id, esSerie);
-  });
 
   pedir();
   return wrap;
@@ -249,166 +195,34 @@ async function pintarHero() {
     $('#hero-title').textContent = item.titulo || 'Velox Play';
     $('#hero-meta').textContent = [item.anio, item.calificacion && `★ ${item.calificacion}`].filter(Boolean).join(' · ');
     $('#hero-text').textContent = item.sinopsis || 'Disfruta del catálogo completo en audio Latino.';
-    $('#hero-btn').onclick = () => abrirDetalle(item.id, false);
+    $('#hero-btn').href = urlDetalle(item.id, false);
   } catch (e) {
     console.warn('[hero]', e);
   }
 }
 
-// ─────────────── Detalle ───────────────
-function cerrarDetalle() { $('#detail').hidden = true; document.body.style.overflow = ''; }
-async function abrirDetalle(id, esSerie) {
-  const d = $('#detail');
-  d.hidden = false;
-  document.body.style.overflow = 'hidden';
-  $('#detail-servers').hidden = true;
-  $('#detail-temporadas').hidden = true;
-  $('#srv-grid').innerHTML = '';
-  $('#episodios').innerHTML = '';
-  $('#tabs').innerHTML = '';
-  $('#detail-title').textContent = 'Cargando...';
-  $('#detail-meta').textContent = '';
-  $('#detail-sinopsis').textContent = '';
-  $('#detail-hero').style.backgroundImage = '';
-
-  try {
-    if (esSerie) {
-      const data = await cargarDetalleSerie(id);
-      if (!data || !data.serie) { toast('No se encontró la serie'); cerrarDetalle(); return; }
-      const s = data.serie;
-      $('#detail-title').textContent = s.titulo;
-      $('#detail-meta').innerHTML = [
-        s.anio, s.calificacion && `★ ${s.calificacion}`, 'Serie'
-      ].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('<span class="dot">·</span>');
-      $('#detail-sinopsis').textContent = s.sinopsis || '';
-      if (s.backdrop_url || s.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(s.backdrop_url || s.poster_url)}")`;
-
-      // Temporadas
-      $('#detail-temporadas').hidden = false;
-      const temporadas = (data.temporadas || []).sort((a, b) => a.numero - b.numero);
-      if (!temporadas.length) { $('#episodios').innerHTML = '<li style="color:var(--text-fade)">Sin episodios</li>'; return; }
-      const tabs = $('#tabs');
-      temporadas.forEach((t, i) => {
-        const b = document.createElement('button');
-        b.className = 'tab' + (i === 0 ? ' is-active' : '');
-        b.textContent = `T${t.numero}`;
-        b.onclick = () => { $$('.tab', tabs).forEach(x => x.classList.remove('is-active')); b.classList.add('is-active'); pintarEpisodios(t); };
-        tabs.appendChild(b);
-      });
-      pintarEpisodios(temporadas[0]);
-    } else {
-      const row = await cargarDetallePeli(id);
-      if (!row) { toast('No se encontró la película'); cerrarDetalle(); return; }
-      $('#detail-title').textContent = row.titulo;
-      $('#detail-meta').innerHTML = [
-        row.anio, row.calificacion && `★ ${row.calificacion}`, 'Película'
-      ].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('<span class="dot">·</span>');
-      $('#detail-sinopsis').textContent = row.sinopsis || '';
-      if (row.backdrop_url || row.poster_url) $('#detail-hero').style.backgroundImage = `url("${cssUrl(row.backdrop_url || row.poster_url)}")`;
-      const srvs = row.pelicula_servidores || [];
-      if (srvs.length) {
-        $('#detail-servers').hidden = false;
-        $('#srv-grid').innerHTML = srvs.map((s, i) => botonServidorHTML(s, i)).join('');
-        $('#srv-grid').addEventListener('click', onElegirServidor);
-      }
-    }
-  } catch (e) {
-    console.error('[detalle]', e);
-    toast('Error cargando detalles');
-    cerrarDetalle();
-  }
-}
-
-function botonServidorHTML(s, i) {
-  const col = colorPorHost(hostDe(s.url));
-  const nombre = nombreServidor(s, i);
-  const idioma = (s.idioma || '').slice(0, 10);
-  return `
-    <button class="srv" data-url="${esc(s.url)}" style="border-color:${col};background:${col}22">
-      <span class="srv__dot" style="background:${col}"></span>
-      <span class="srv__name">${esc(nombre)}</span>
-      ${idioma ? `<span class="srv__lang" style="background:${col}44">${esc(idioma)}</span>` : ''}
-    </button>
-  `;
-}
-
-function onElegirServidor(ev) {
-  const btn = ev.target.closest('.srv');
-  if (!btn) return;
-  const url = btn.dataset.url;
-  if (!url) return;
-  abrirPlayer(url);
-}
-
-function abrirPlayer(url) {
-  const p = document.getElementById('player');
-  const iframe = document.getElementById('player-iframe');
-  iframe.src = url;
-  p.hidden = false;
-  document.body.style.overflow = 'hidden';
-}
-function cerrarPlayer() {
-  const p = document.getElementById('player');
-  const iframe = document.getElementById('player-iframe');
-  iframe.src = 'about:blank';
-  p.hidden = true;
-  document.body.style.overflow = '';
-}
-
-function pintarEpisodios(temp) {
-  const ol = $('#episodios');
-  ol.innerHTML = '';
-  const eps = (temp.episodios || []).sort((a, b) => (a.numero || 0) - (b.numero || 0));
-  if (!eps.length) { ol.innerHTML = '<li style="color:var(--text-fade)">Sin episodios</li>'; return; }
-  for (const ep of eps) {
-    const servidores = ep.episodio_servidores || [];
-    const tieneSrv = servidores.length > 0;
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span class="ep-num">T${esc(temp.numero)}E${esc(ep.numero)}</span>
-      <span class="ep-tit">${esc(ep.titulo || `Episodio ${ep.numero}`)}</span>
-      ${tieneSrv ? `<span class="ep-badge">${servidores.length} srv</span>` : '<span class="ep-badge ep-badge--off">Sin servidor</span>'}
-    `;
-    if (tieneSrv) {
-      li.onclick = () => {
-        $('#detail-servers').hidden = false;
-        $('#detail-servers').querySelector('h3').textContent = `Servidores — T${temp.numero}E${ep.numero}`;
-        $('#srv-grid').innerHTML = servidores.map((s, i) => botonServidorHTML(s, i)).join('');
-        $('#srv-grid').onclick = onElegirServidor;
-        $('#detail-servers').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      };
-    }
-    ol.appendChild(li);
-  }
-}
-
-// ─────────────── Buscar ───────────────
-window.VeloxBuscar = function (ev) {
-  ev.preventDefault();
-  const q = $('#q').value.trim();
-  if (!q) return false;
-  pintarResultadosBusqueda(q);
-  return false;
-};
-
+// ─────────────── Resultados de ?q= (el desplegable lo maneja js/buscador.js) ───────────────
 async function pintarResultadosBusqueda(q) {
   const rows = $('#rows');
   rows.innerHTML = `<section class="row"><header class="row__header"><h2 class="row__title">Resultados: "${esc(q)}"</h2></header><div class="row__scroller">${Array(5).fill(skeletonHTML()).join('')}</div></section>`;
   const scroller = $('.row__scroller', rows);
   try {
-    const safe = encodeURIComponent(q);
-    const pelis = await sbGet(`v_pelis_lista?select=*&titulo=ilike.*${safe}*`, { desde: 0, hasta: 24 });
-    const series = await sbGet(`v_series_lista?select=*&titulo=ilike.*${safe}*`, { desde: 0, hasta: 24 });
+    // Año de 4 dígitos → anio=eq; si no, título o género (igual que buscador.js)
+    const limpio = q.replace(/[(),*{}"]/g, ' ').trim();
+    const genero = limpio.charAt(0).toUpperCase() + limpio.slice(1).toLowerCase();
+    const filtro = /^\d{4}$/.test(q)
+      ? `anio=eq.${q}`
+      : `or=${encodeURIComponent(`(titulo.ilike.*${limpio}*,generos.cs.{${genero}})`)}`;
+    const [pelis, series] = await Promise.all([
+      sbGet(`v_pelis_lista?select=*&${filtro}`, { desde: 0, hasta: 24 }),
+      sbGet(`v_series_lista?select=*&${filtro}`, { desde: 0, hasta: 24 })
+    ]);
     const todos = [
       ...pelis.map(p => ({ ...p, es_serie: false })),
       ...series.map(s => ({ ...s, es_serie: true }))
     ];
     if (!todos.length) { scroller.innerHTML = '<div style="color:var(--text-fade);font-size:13px;padding:14px">Sin resultados.</div>'; return; }
     scroller.innerHTML = todos.map(tarjetaHTML).join('');
-    scroller.addEventListener('click', (ev) => {
-      const c = ev.target.closest('.card'); if (!c) return;
-      abrirDetalle(c.dataset.id, c.dataset.serie === 'true');
-    });
   } catch (e) {
     console.error('[buscar]', e);
     scroller.innerHTML = '<div style="color:var(--text-fade);font-size:13px;padding:14px">Error en la búsqueda.</div>';
@@ -425,45 +239,15 @@ function routear() {
 
 // ─────────────── Init ───────────────
 function init() {
-  // Año
-  $('#y').textContent = new Date().getFullYear();
-
   // Topbar scroll
   const topbar = $('#topbar');
   const onScroll = () => topbar.classList.toggle('topbar--scrolled', window.scrollY > 4);
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Nav + hamburguesa móvil
-  const nav = document.getElementById('nav');
-  const navToggle = document.getElementById('nav-toggle');
-  if (navToggle && nav) {
-    const cerrarNav = () => { nav.classList.remove('is-open'); navToggle.setAttribute('aria-expanded', 'false'); };
-    navToggle.addEventListener('click', () => {
-      const abierto = nav.classList.toggle('is-open');
-      navToggle.setAttribute('aria-expanded', abierto ? 'true' : 'false');
-    });
-    nav.addEventListener('click', (e) => { if (e.target.closest('.nav__link')) cerrarNav(); });
-    document.addEventListener('click', (e) => {
-      if (!nav.classList.contains('is-open')) return;
-      if (e.target.closest('#nav') || e.target.closest('#nav-toggle')) return;
-      cerrarNav();
-    });
-  }
+  // El menú hamburguesa lo maneja solo js/ui.js.
   $$('.nav__link').forEach(a => a.addEventListener('click', () => setTimeout(routear, 0)));
   window.addEventListener('hashchange', routear);
-
-  // Detail close
-  $('#detail-close').onclick = cerrarDetalle;
-  $('#detail-backdrop').onclick = cerrarDetalle;
-  // Player close
-  $('#player-close').onclick = cerrarPlayer;
-  $('#player-backdrop').onclick = cerrarPlayer;
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (!document.getElementById('player').hidden) cerrarPlayer();
-    else cerrarDetalle();
-  });
 
   // Formulario de reporte: se guarda en la tabla `reportes` de Supabase
   // (anon solo puede INSERT, ver migrations/rls_hardening.sql). Un Database
@@ -506,21 +290,18 @@ function init() {
     return false;
   };
 
-  // Query buscar via URL (?q=…)
+  // Query buscar via URL (?q=…): se pintan resultados en lugar de las filas normales
+  // (antes routear() borraba los resultados justo después de pedirlos).
   const params = new URLSearchParams(location.search);
-  const q = params.get('q');
-  if (q) { $('#q').value = q; pintarResultadosBusqueda(q); }
-
+  const q = (params.get('q') || '').trim();
   pintarHero();
-  routear();
+  if (q) { $('#q').value = q; pintarResultadosBusqueda(q); }
+  else routear();
 
-  // Enlace externo: #det=peli:ID o #det=serie:ID (desde peliculas.html / series.html)
+  // Enlaces antiguos #det=peli:ID / #det=serie:ID → nueva ficha detalles.html
   function abrirDesdeHash() {
     const m = /det=(peli|serie):(.+)/.exec(location.hash || '');
-    if (!m) return;
-    const esSerie = m[1] === 'serie';
-    const id = decodeURIComponent(m[2]);
-    abrirDetalle(id, esSerie);
+    if (m) location.replace(urlDetalle(decodeURIComponent(m[2]), m[1] === 'serie'));
   }
   abrirDesdeHash();
   window.addEventListener('hashchange', abrirDesdeHash);

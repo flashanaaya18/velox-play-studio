@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://iqebalrrvjmbtemlrigt.supabase.co; frame-src https:; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#0A0D1A" />
+<meta name="theme-color" content="#0a0a0a" />
 <meta name="color-scheme" content="dark" />
 <title>Velox Play — Películas y Series en Latino</title>
 <meta name="description" content="Velox Play: catálogo de películas y series en audio Latino en alta definición. Explora los estrenos, lo más visto y mucho más." />
@@ -13,13 +13,14 @@
 <meta name="robots" content="index,follow" />
 <meta name="author" content="Velox Play" />
 <meta name="google-site-verification" content="STGP4YSyU94hh-bEzj_2WWJMJvswsyFrWCLGjD6s4Sg" />
+<meta property="og:url" content="https://flashanaaya18.github.io/velox-play-studio/" />
 <link rel="canonical" href="https://flashanaaya18.github.io/velox-play-studio/" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Velox Play — Películas y Series en Latino" />
 <meta property="og:description" content="Catálogo de películas y series en audio Latino en alta definición." />
-<meta property="og:image" content="assets/og-cover.png" />
+<meta property="og:image" content="https://flashanaaya18.github.io/velox-play-studio/assets/icons/nuevo.png" />
 <meta property="og:site_name" content="Velox Play" />
 <meta property="og:locale" content="es_MX" />
 
@@ -27,7 +28,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Velox Play" />
 <meta name="twitter:description" content="Catálogo de películas y series en audio Latino." />
-<meta name="twitter:image" content="assets/og-cover.png" />
+<meta name="twitter:image" content="https://flashanaaya18.github.io/velox-play-studio/assets/icons/nuevo.png" />
 
 <!-- JSON-LD -->
 <script type="application/ld+json">
@@ -45,10 +46,15 @@
 }
 </script>
 
+<link rel="icon" type="image/png" href="assets/icons/nuevo.png" />
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
-<link rel="apple-touch-icon" href="assets/icon-192.png" />
+<link rel="apple-touch-icon" href="assets/icons/nuevo.png" />
 <link rel="manifest" href="manifest.webmanifest" />
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://iqebalrrvjmbtemlrigt.supabase.co" crossorigin />
+<link rel="dns-prefetch" href="https://iqebalrrvjmbtemlrigt.supabase.co" />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="css/styles.css" />
@@ -57,7 +63,7 @@
 
 <header class="topbar" id="topbar">
   <div class="topbar__inner">
-    <a href="#inicio" class="brand" aria-label="Velox Play inicio">
+    <a href="index.html" class="brand" aria-label="Velox Play inicio">
       <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
         <defs>
           <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -71,7 +77,7 @@
       <span class="brand__name">Velox<span>Play</span></span>
     </a>
 
-    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
       <span></span><span></span><span></span>
     </button>
 
@@ -84,11 +90,12 @@
       <a href="vip.html" class="nav__link">VIP</a>
     </nav>
 
-    <form class="search" role="search" data-submit="VeloxBuscar">
-      <input id="q" type="search" placeholder="Buscar título..." aria-label="Buscar" autocomplete="off" />
+    <form class="search" id="buscador" role="search">
+      <input id="q" type="search" placeholder="Buscar título, género o año…" aria-label="Buscar" autocomplete="off" aria-controls="buscador-resultados" aria-expanded="false" />
       <button type="submit" aria-label="Buscar">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 1-5.3 14l-3.2 3.2-1.4-1.4 3.2-3.2A8 8 0 0 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
       </button>
+      <div id="buscador-resultados" class="buscador-resultados" role="listbox" aria-label="Resultados de búsqueda" hidden></div>
     </form>
   </div>
 </header>
@@ -104,7 +111,7 @@
       <p class="hero__meta" id="hero-meta">Catálogo en audio Latino en alta definición.</p>
       <p class="hero__text" id="hero-text">Explora películas y series actualizadas, todo en un solo lugar.</p>
       <div class="hero__cta">
-        <button class="btn btn--primary" id="hero-btn" type="button">Ver detalles</button>
+        <a class="btn btn--primary" id="hero-btn" href="peliculas.html">Ver detalles</a>
       </div>
     </div>
   </section>
@@ -118,7 +125,7 @@
   <section class="apkbox" id="apk" aria-label="Descargas y reportes">
     <div class="apkbox__inner">
       <div class="apkbox__card">
-        <h3>App Velox Play</h3>
+        <h2 class="apkbox__h">App Velox Play</h2>
         <p>Instala la aplicación en tu móvil o Smart TV para ver películas y series directamente desde el reproductor nativo.</p>
         <div class="apkbox__btns">
           <a class="btn btn--primary" href="https://github.com/flashanaaya18/velox-play-studio/releases/download/v7.4.0/VeloxPlay-Movil-7.4.0.apk" rel="noopener">Descargar APK Móvil · 15.6 MB</a>
@@ -133,11 +140,11 @@
         </ol></details>
       </div>
       <div class="apkbox__card">
-        <h3>Reportar un problema</h3>
+        <h2 class="apkbox__h">Reportar un problema</h2>
         <p>¿Un servidor no carga? ¿Un título falta? Cuéntanos y lo arreglamos.</p>
         <form class="reportar" data-submit="VeloxReportar">
-          <input type="text" id="r-titulo" placeholder="Título del contenido" required />
-          <select id="r-motivo" required>
+          <input type="text" id="r-titulo" placeholder="Título del contenido" aria-label="Título del contenido" required />
+          <select id="r-motivo" aria-label="Motivo del reporte" required>
             <option value="">¿Qué pasa?</option>
             <option>No carga ningún servidor</option>
             <option>Audio no es Latino</option>
@@ -145,7 +152,7 @@
             <option>Poster o datos incorrectos</option>
             <option>Otro</option>
           </select>
-          <textarea id="r-detalle" rows="3" placeholder="Detalle (opcional)"></textarea>
+          <textarea id="r-detalle" rows="3" placeholder="Detalle (opcional)" aria-label="Detalle (opcional)"></textarea>
           <button type="submit" class="btn btn--primary">
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="m9.78 18.65.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42"/></svg>
             Enviar por Telegram
@@ -174,45 +181,12 @@
   </div>
 </footer>
 
-<!-- Detalle (modal) -->
-<div class="detail" id="detail" hidden role="dialog" aria-modal="true" aria-labelledby="detail-title">
-  <div class="detail__backdrop" id="detail-backdrop"></div>
-  <article class="detail__card">
-    <button class="detail__close" type="button" aria-label="Cerrar" id="detail-close">×</button>
-    <div class="detail__hero" id="detail-hero"></div>
-    <div class="detail__body">
-      <h2 id="detail-title"></h2>
-      <div class="detail__meta" id="detail-meta"></div>
-      <p id="detail-sinopsis"></p>
-
-      <div class="detail__servers" id="detail-servers" hidden>
-        <h3>Servidores</h3>
-        <div class="srv-grid" id="srv-grid"></div>
-      </div>
-
-      <div class="detail__temporadas" id="detail-temporadas" hidden>
-        <h3>Temporadas</h3>
-        <div class="tabs" id="tabs"></div>
-        <ol class="episodios" id="episodios"></ol>
-      </div>
-    </div>
-  </article>
-</div>
-
-<!-- Reproductor embed (iframe en la misma página) -->
-<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-label="Reproductor">
-  <div class="player__backdrop" id="player-backdrop"></div>
-  <div class="player__frame">
-    <button class="player__close" type="button" id="player-close" aria-label="Cerrar reproductor">×</button>
-    <iframe id="player-iframe" src="about:blank" title="Reproductor" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe>
-  </div>
-</div>
-
 <!-- Toast -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="js/config.js"></script>
 <script src="js/ui.js"></script>
 <script type="module" src="js/app.js"></script>
+<script src="js/buscador.js"></script>
 </body>
 </html>

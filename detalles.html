@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta charset="UTF-8" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="color-scheme" content="dark" />
+<title>Detalles — Velox Play</title>
+<meta name="description" content="Mira películas y series en Latino en Velox Play." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" id="canonical" href="https://flashanaaya18.github.io/velox-play-studio/detalles.html" />
+<meta property="og:site_name" content="Velox Play" />
+<meta property="og:title" content="Velox Play" />
+<meta property="og:description" content="Mira películas y series en Latino en Velox Play." />
+<meta property="og:image" content="" />
+<meta property="og:type" content="video.movie" />
+<meta property="og:url" content="https://flashanaaya18.github.io/velox-play-studio/detalles.html" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="assets/icons/nuevo.png" />
+<link rel="preconnect" href="https://iqebalrrvjmbtemlrigt.supabase.co" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/detalles.css" />
+</head>
+<body class="pg-detalles">
+
+<header class="topbar" id="topbar">
+  <div class="topbar__inner">
+    <a href="index.html" class="brand" aria-label="Velox Play inicio">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E50914"/><stop offset="1" stop-color="#FF6B2C"/></linearGradient></defs>
+        <rect width="32" height="32" rx="8" fill="url(#bg)"/><path d="M10 9 L22 16 L10 23 Z" fill="#fff"/>
+      </svg>
+      <span class="brand__name">Velox<span>Play</span></span>
+    </a>
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" aria-label="Principal" id="nav">
+      <a href="index.html" class="nav__link">Inicio</a>
+      <a href="peliculas.html" class="nav__link">Películas</a>
+      <a href="series.html" class="nav__link">Series</a>
+      <a href="canales.html" class="nav__link">Canales</a>
+      <a href="app.html" class="nav__link">App</a>
+      <a href="vip.html" class="nav__link">VIP</a>
+    </nav>
+    <form class="search" id="buscador" role="search" action="#">
+      <label for="q" class="sr-only">Buscar películas y series</label>
+      <input id="q" type="search" name="q" placeholder="Buscar…" autocomplete="off" />
+      <div id="buscador-resultados" class="buscador-resultados" hidden></div>
+    </form>
+  </div>
+</header>
+
+<main id="main" class="det">
+  <div id="det-aviso" class="det-aviso" role="status" hidden>Datos de ejemplo — no se pudo conectar con el servidor.</div>
+
+  <!-- Skeleton mientras carga -->
+  <div id="det-skeleton" class="det-grid det-skel" aria-hidden="true">
+    <div class="det-col-player"><div class="sk sk-player"></div></div>
+    <div class="det-col-info"><div class="sk sk-title"></div><div class="sk sk-line"></div><div class="sk sk-poster"></div></div>
+  </div>
+
+  <article id="det-contenido" class="det-grid" hidden>
+    <section class="det-col-player" aria-label="Reproductor">
+      <div class="player" id="player">
+        <div class="player__vacio" id="player-vacio">Selecciona un servidor</div>
+      </div>
+      <p id="player-estado" class="player-estado" aria-live="polite"></p>
+      <div id="servidores" class="servidores"></div>
+    </section>
+
+    <section class="det-col-eps" id="det-eps" aria-labelledby="eps-titulo" hidden>
+      <h2 id="eps-titulo" class="det-h2">Temporadas y episodios</h2>
+      <div class="temp-ctrl">
+        <button type="button" class="btn-temp" id="temp-prev" aria-label="Temporada anterior">‹</button>
+        <label for="temp-select" class="sr-only">Temporada</label>
+        <select id="temp-select" class="temp-select"></select>
+        <button type="button" class="btn-temp" id="temp-next" aria-label="Temporada siguiente">›</button>
+      </div>
+      <ol id="episodios" class="episodios"></ol>
+    </section>
+
+    <section class="det-col-info" aria-labelledby="det-titulo">
+      <div class="info-head">
+        <img id="det-poster" class="det-poster" alt="" width="200" height="300" decoding="async" hidden />
+        <div>
+          <h1 id="det-titulo" class="det-titulo"></h1>
+          <ul id="det-meta" class="det-meta"></ul>
+          <ul id="det-generos" class="det-generos" aria-label="Géneros"></ul>
+        </div>
+      </div>
+      <h2 class="det-h2 sr-only">Sinopsis</h2>
+      <p id="det-sinopsis" class="det-sinopsis"></p>
+    </section>
+  </article>
+
+  <div id="det-error" class="det-error" hidden>
+    <p class="det-h2">Título no encontrado</p>
+    <p><a href="index.html">Volver al inicio</a></p>
+  </div>
+
+  <section class="top10" aria-labelledby="top10-titulo">
+    <h2 id="top10-titulo" class="det-h2">Top 10 Velox Play</h2>
+    <ol id="top10" class="top10__row"></ol>
+  </section>
+</main>
+
+<div id="adulto" class="adulto" role="dialog" aria-modal="true" aria-labelledby="adulto-t" hidden>
+  <div class="adulto__box">
+    <h2 id="adulto-t">Contenido +18</h2>
+    <p>Este título contiene material para adultos. Continúas bajo tu propia responsabilidad.</p>
+    <div class="adulto__btns">
+      <button type="button" id="adulto-ok" class="btn-rojo">Continuar</button>
+      <button type="button" id="adulto-no" class="btn-gris">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/detalles.js"></script>
+</body>
+</html>

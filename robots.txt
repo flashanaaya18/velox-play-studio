@@ -43,7 +43,6 @@ Disallow: /
 # ─── Buscadores normales ───
 User-agent: *
 Allow: /
-Disallow: /js/
 Disallow: /migrations/
 Disallow: /supabase/
 

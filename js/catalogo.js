@@ -37,25 +37,30 @@ async function sbGet(path, desde, hasta) {
 }
 
 function tarjeta(item, esSerie) {
-  const title = (item.titulo || 'Sin título').replace(/"/g, '&quot;');
+  const title = item.titulo || 'Sin título';
   const poster = item.poster_url || item.backdrop_url || '';
   const anio = item.anio || '';
   const badges = [];
   if (item.es_adulto) badges.push('<span class="badge badge--adulto">+18</span>');
   if (item.es_cam) badges.push('<span class="badge badge--cam">Cam</span>');
   if (item.episodio_nuevo || item.temporada_nueva) badges.push('<span class="badge badge--new">Nuevo</span>');
+  // Enlace real a la ficha (funciona sin JS y lo indexan los buscadores)
+  const href = `detalles.html?id=${encodeURIComponent(item.id)}&tipo=${esSerie ? 'serie' : 'pelicula'}`;
   return `
-    <article class="card" data-id="${esc(item.id)}" data-serie="${esSerie ? 'true' : 'false'}" tabindex="0" role="button" aria-label="${esc(title)}">
-      <img class="card__poster" loading="lazy" decoding="async" src="${esc(poster)}" alt="${esc(title)}" data-hide-on-error />
+    <a class="card" href="${href}" data-id="${esc(item.id)}" data-serie="${esSerie ? 'true' : 'false'}" aria-label="${esc(title)}${anio ? ' (' + esc(anio) + ')' : ''}">
+      <img class="card__poster" loading="lazy" decoding="async" width="300" height="450" src="${esc(poster)}" alt="Póster de ${esc(title)}" data-hide-on-error />
       <div class="card__badges">${badges.join('')}</div>
       <div class="card__fade"></div>
       <div class="card__info">
         <div class="card__title">${esc(title)}</div>
         <div class="card__sub">${esc(anio)}</div>
       </div>
-    </article>
+    </a>
   `;
 }
+
+// Esqueletos mientras carga la primera página
+function skeletons(n) { return Array(n).fill('<div class="card skeleton" aria-hidden="true"></div>').join(''); }
 
 // Inicializa una página de catálogo con filtros.
 // opciones:
@@ -93,17 +98,17 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
 
   // Botones de filtro
   barra.innerHTML = filtros.map((f, i) =>
-    `<button class="chip${i === 0 ? ' is-active' : ''}" data-key="${f.key}">${f.label}</button>`
+    `<button type="button" class="chip${i === 0 ? ' is-active' : ''}" data-key="${f.key}" aria-pressed="${i === 0}">${f.label}</button>`
   ).join('');
   barra.addEventListener('click', (e) => {
     const b = e.target.closest('.chip'); if (!b) return;
     const f = filtros.find(x => x.key === b.dataset.key); if (!f) return;
-    barra.querySelectorAll('.chip').forEach(x => x.classList.toggle('is-active', x === b));
+    barra.querySelectorAll('.chip').forEach(x => { x.classList.toggle('is-active', x === b); x.setAttribute('aria-pressed', String(x === b)); });
     filtroActual = f;
     recargar();
   });
 
-  function recargar() { pagina = 1; hayMas = true; grid.innerHTML = ''; cargar(); }
+  function recargar() { pagina = 1; hayMas = true; grid.innerHTML = skeletons(PAGE); cargar(); }
 
   async function cargar() {
     if (cargando || !hayMas) return;
@@ -118,6 +123,7 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
       if (generoSel) partes.push(`generos=cs.{${encodeURIComponent(generoSel)}}`);
       const q = `?select=*${partes.length ? '&' + partes.join('&') : ''}`;
       const items = await sbGet(`${tabla}${q}`, desde, hasta);
+      if (pagina === 1) grid.querySelectorAll('.skeleton').forEach(n => n.remove());
       if (pagina === 1 && items.length === 0) {
         grid.innerHTML = '<div style="color:var(--text-fade);padding:20px">Sin títulos todavía.</div>';
         hayMas = false; estado.textContent = ''; return;
@@ -127,25 +133,14 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
       estado.textContent = hayMas ? '' : 'Fin del catálogo';
     } catch (e) {
       console.error('[catalogo]', e);
+      grid.querySelectorAll('.skeleton').forEach(n => n.remove());
       estado.textContent = 'Error cargando';
     } finally {
       cargando = false;
     }
   }
 
-  // Click → abre detalle inline
-  grid.addEventListener('click', (e) => {
-    const card = e.target.closest('.card'); if (!card) return;
-    const id = card.dataset.id;
-    const esSerieCard = card.dataset.serie === 'true';
-    if (window.VeloxAbrirDetalle) window.VeloxAbrirDetalle(id, esSerieCard);
-  });
-  grid.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    const card = e.target.closest('.card'); if (!card) return;
-    e.preventDefault();
-    if (window.VeloxAbrirDetalle) window.VeloxAbrirDetalle(card.dataset.id, card.dataset.serie === 'true');
-  });
+  // Las tarjetas son <a href="detalles.html?..."> : no hace falta handler de clic.
 
   // Scroll infinito vertical
   window.addEventListener('scroll', () => {
@@ -153,5 +148,6 @@ window.VeloxCatalogo = function ({ vista, filtros, gridSel, filtrosSel, estadoSe
     if (cerca && hayMas && !cargando) { pagina += 1; cargar(); }
   }, { passive: true });
 
+  grid.innerHTML = skeletons(PAGE);
   cargar();
 };
